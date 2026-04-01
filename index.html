@@ -1,0 +1,986 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hinweisgeberportal</title>
+    <script src="https://cdn.webix.com/edge/webix.js"></script>
+    <link rel="stylesheet" href="https://cdn.webix.com/edge/webix.css" />
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <script src="js/config.js"></script>
+    <script src="js/lang/de.js"></script>
+    <script src="js/api.js"></script>
+    <link rel="stylesheet" href="css/custom.css" />
+    <style>
+      .hero {
+        background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+        color: #fff;
+        padding: 80px 24px;
+        text-align: center;
+      }
+      .hero h1 {
+        font-size: 36px;
+        font-weight: 700;
+        margin-bottom: 16px;
+      }
+      .hero p {
+        font-size: 18px;
+        opacity: 0.85;
+        max-width: 600px;
+        margin: 0 auto 40px;
+        line-height: 1.6;
+      }
+      .hero-actions {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .btn-primary {
+        background: #fff;
+        color: #1a237e;
+        border: none;
+        padding: 14px 32px;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .btn-primary:hover {
+        background: #e8eaf6;
+        transform: translateY(-1px);
+      }
+      .btn-outline {
+        background: transparent;
+        color: #fff;
+        border: 2px solid rgba(255, 255, 255, 0.7);
+        padding: 14px 32px;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .btn-outline:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: #fff;
+      }
+      .features {
+        display: flex;
+        gap: 24px;
+        padding: 48px 24px;
+        max-width: 960px;
+        margin: 0 auto;
+        flex-wrap: wrap;
+      }
+      .feature-card {
+        flex: 1;
+        min-width: 200px;
+        background: #fff;
+        border-radius: 8px;
+        padding: 28px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        text-align: center;
+      }
+      .feature-card i {
+        font-size: 36px;
+        color: #1a237e;
+        margin-bottom: 16px;
+      }
+      .feature-card h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #1a237e;
+      }
+      .feature-card p {
+        font-size: 14px;
+        color: #666;
+        line-height: 1.6;
+      }
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+      }
+      .modal-overlay.active {
+        display: flex;
+      }
+      .modal-box {
+        background: #fff;
+        border-radius: 10px;
+        padding: 32px;
+        width: 100%;
+        max-width: 560px;
+        max-height: 90vh;
+        overflow-y: auto;
+        position: relative;
+      }
+      .modal-close {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        background: none;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        color: #999;
+      }
+      .modal-close:hover {
+        color: #333;
+      }
+      .form-group {
+        margin-bottom: 16px;
+      }
+      .form-group label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: #444;
+        margin-bottom: 6px;
+      }
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: border-color 0.2s;
+        font-family: inherit;
+      }
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: #1a237e;
+      }
+      .form-group textarea {
+        resize: vertical;
+        min-height: 100px;
+      }
+      .form-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+      }
+      .btn {
+        padding: 10px 24px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s;
+      }
+      .btn-blue {
+        background: #1a237e;
+        color: #fff;
+      }
+      .btn-blue:hover {
+        background: #283593;
+      }
+      .btn-gray {
+        background: #f5f5f5;
+        color: #333;
+        border: 1px solid #ddd;
+      }
+      .btn-gray:hover {
+        background: #eeeeee;
+      }
+      .btn-green {
+        background: #43a047;
+        color: #fff;
+      }
+      .btn-green:hover {
+        background: #388e3c;
+      }
+      .step-tabs {
+        display: flex;
+        margin-bottom: 28px;
+        border-bottom: 2px solid #e0e0e0;
+      }
+      .step-tab {
+        padding: 10px 20px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #999;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -2px;
+        cursor: default;
+      }
+      .step-tab.active {
+        color: #1a237e;
+        border-bottom-color: #1a237e;
+      }
+      .step-tab.done {
+        color: #43a047;
+        border-bottom-color: #43a047;
+      }
+      .step-content {
+        display: none;
+      }
+      .step-content.active {
+        display: block;
+      }
+      .divider {
+        text-align: center;
+        margin: 16px 0;
+        color: #999;
+        font-size: 13px;
+        position: relative;
+      }
+      .divider::before,
+      .divider::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        width: 42%;
+        height: 1px;
+        background: #e0e0e0;
+      }
+      .divider::before {
+        left: 0;
+      }
+      .divider::after {
+        right: 0;
+      }
+      .link-btn {
+        background: none;
+        border: none;
+        color: #1a237e;
+        cursor: pointer;
+        font-size: 13px;
+        text-decoration: underline;
+      }
+      .optional-tag {
+        font-size: 11px;
+        color: #999;
+        font-weight: 400;
+        margin-left: 4px;
+      }
+      @media (max-width: 600px) {
+        .hero h1 {
+          font-size: 24px;
+        }
+        .hero p {
+          font-size: 15px;
+        }
+        .modal-box {
+          padding: 20px;
+        }
+        .step-tab {
+          padding: 8px 10px;
+          font-size: 11px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="logo">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span data-i18n="app_name"></span>
+      </div>
+      <div class="header-actions">
+        <button
+          class="lang-switcher"
+          onclick="switchLang()"
+          data-i18n="lang_switch"
+        ></button>
+        <button
+          class="btn-outline"
+          style="padding: 6px 16px; font-size: 13px"
+          onclick="openLogin()"
+        >
+          <i class="fa-solid fa-right-to-bracket"></i>
+          <span data-i18n="login"></span>
+        </button>
+      </div>
+    </header>
+
+    <section class="hero">
+      <h1 data-i18n="hero_title"></h1>
+      <p data-i18n="hero_subtitle"></p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="openReportForm()">
+          <i class="fa-solid fa-file-shield"></i>
+          <span data-i18n="hero_btn_submit"></span>
+        </button>
+        <button
+          class="btn-outline"
+          onclick="window.location.href = 'track.html'"
+        >
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <span data-i18n="hero_btn_track"></span>
+        </button>
+      </div>
+    </section>
+
+    <section class="features">
+      <div class="feature-card">
+        <i class="fa-solid fa-user-secret"></i>
+        <h3 data-i18n="feature_anon_title"></h3>
+        <p data-i18n="feature_anon_text"></p>
+      </div>
+      <div class="feature-card">
+        <i class="fa-solid fa-lock"></i>
+        <h3 data-i18n="feature_secure_title"></h3>
+        <p data-i18n="feature_secure_text"></p>
+      </div>
+      <div class="feature-card">
+        <i class="fa-solid fa-comments"></i>
+        <h3 data-i18n="feature_comms_title"></h3>
+        <p data-i18n="feature_comms_text"></p>
+      </div>
+      <div class="feature-card">
+        <i class="fa-solid fa-scale-balanced"></i>
+        <h3 data-i18n="feature_legal_title"></h3>
+        <p data-i18n="feature_legal_text"></p>
+      </div>
+    </section>
+
+    <div class="modal-overlay" id="reportModal">
+      <div class="modal-box" style="max-width: 640px">
+        <button class="modal-close" onclick="closeModal('reportModal')">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="step-tabs">
+          <div class="step-tab active" id="tab1" data-i18n="tab1"></div>
+          <div class="step-tab" id="tab2" data-i18n="tab2"></div>
+          <div class="step-tab" id="tab3" data-i18n="tab3"></div>
+          <div class="step-tab" id="tab4" data-i18n="tab4"></div>
+        </div>
+
+        <div class="step-content active" id="step1">
+          <h2 class="card-title" data-i18n="step1_title"></h2>
+          <p class="card-subtitle" data-i18n="step1_subtitle"></p>
+          <div class="form-group">
+            <label data-i18n="label_category"></label>
+            <select id="category">
+              <option value="" data-i18n="cat_select"></option>
+              <option value="fraud" data-i18n="cat_fraud"></option>
+              <option value="harassment" data-i18n="cat_harassment"></option>
+              <option value="safety" data-i18n="cat_safety"></option>
+              <option
+                value="discrimination"
+                data-i18n="cat_discrimination"
+              ></option>
+              <option value="other" data-i18n="cat_other"></option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label data-i18n="label_subject"></label>
+            <input
+              type="text"
+              id="subject"
+              data-i18n-placeholder="placeholder_subject"
+            />
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-blue" onclick="goStep(2)">
+              <span data-i18n="btn_next"></span>
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="step-content" id="step2">
+          <h2 class="card-title" data-i18n="step2_title"></h2>
+          <p class="card-subtitle" data-i18n="step2_subtitle"></p>
+          <div class="form-group">
+            <label data-i18n="label_description"></label>
+            <textarea
+              id="description"
+              data-i18n-placeholder="placeholder_description"
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label>
+              <span data-i18n="label_incident_date"></span>
+              <span class="optional-tag" data-i18n="optional"></span>
+            </label>
+            <input type="date" id="incidentDate" />
+          </div>
+          <div class="form-group">
+            <label>
+              <span data-i18n="label_incident_location"></span>
+              <span class="optional-tag" data-i18n="optional"></span>
+            </label>
+            <input
+              type="text"
+              id="incidentLocation"
+              data-i18n-placeholder="placeholder_location"
+            />
+          </div>
+          <div class="form-group">
+            <label>
+              <span data-i18n="label_involved_persons"></span>
+              <span class="optional-tag" data-i18n="optional"></span>
+            </label>
+            <input
+              type="text"
+              id="involvedPersons"
+              data-i18n-placeholder="placeholder_persons"
+            />
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-gray" onclick="goStep(1)">
+              <i class="fa-solid fa-arrow-left"></i>
+              <span data-i18n="btn_back"></span>
+            </button>
+            <button class="btn btn-blue" onclick="goStep(3)">
+              <span data-i18n="btn_next"></span>
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="step-content" id="step3">
+          <h2 class="card-title" data-i18n="step3_title"></h2>
+          <p class="card-subtitle" data-i18n="step3_subtitle"></p>
+          <div class="form-group">
+            <label>
+              <span data-i18n="label_file"></span>
+              <span class="optional-tag" data-i18n="optional"></span>
+            </label>
+            <input
+              type="file"
+              id="attachmentFile"
+              accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.mp4,.mp3,.wav"
+            />
+            <p
+              style="font-size: 12px; color: #999; margin-top: 6px"
+              data-i18n="file_hint"
+            ></p>
+          </div>
+          <div id="attachmentPreview" style="display: none; margin-top: 8px">
+            <p style="font-size: 13px; color: #43a047">
+              <i class="fa-solid fa-check"></i>
+              <span id="attachmentName"></span>
+            </p>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-gray" onclick="goStep(2)">
+              <i class="fa-solid fa-arrow-left"></i>
+              <span data-i18n="btn_back"></span>
+            </button>
+            <button class="btn btn-blue" onclick="goStep(4)">
+              <span data-i18n="btn_next"></span>
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="step-content" id="step4">
+          <h2 class="card-title" data-i18n="step4_title"></h2>
+          <p class="card-subtitle" data-i18n="step4_subtitle"></p>
+          <div
+            id="summaryBox"
+            style="
+              background: #f5f5f5;
+              border-radius: 6px;
+              padding: 16px;
+              margin-bottom: 20px;
+              font-size: 13px;
+            "
+          >
+            <p>
+              <strong data-i18n="summary_category"></strong>:
+              <span id="summaryCategory"></span>
+            </p>
+            <p style="margin-top: 6px">
+              <strong data-i18n="summary_subject"></strong>:
+              <span id="summarySubject"></span>
+            </p>
+          </div>
+          <div class="form-actions" style="flex-direction: column; gap: 12px">
+            <button
+              class="btn btn-blue"
+              style="width: 100%"
+              onclick="submitReport(false)"
+            >
+              <i class="fa-solid fa-user-secret"></i>
+              <span data-i18n="btn_submit_anonymous"></span>
+            </button>
+            <div class="divider" data-i18n="or_divider"></div>
+            <button
+              class="btn btn-green"
+              style="width: 100%; display: none"
+              onclick="submitReport(true)"
+              id="btnSubmitLoggedIn"
+            >
+              <i class="fa-solid fa-user"></i>
+              <span data-i18n="btn_submit_account"></span>
+            </button>
+            <button class="btn btn-gray" onclick="goStep(3)">
+              <i class="fa-solid fa-arrow-left"></i>
+              <span data-i18n="btn_back"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="loginModal">
+      <div class="modal-box">
+        <button class="modal-close" onclick="closeModal('loginModal')">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div id="loginForm">
+          <h2 class="card-title" data-i18n="login_title"></h2>
+          <p class="card-subtitle" data-i18n="login_subtitle"></p>
+          <div class="form-group">
+            <label data-i18n="label_email"></label>
+            <input
+              type="email"
+              id="loginEmail"
+              data-i18n-placeholder="placeholder_email"
+            />
+          </div>
+          <div class="form-group">
+            <label data-i18n="label_password"></label>
+            <input
+              type="password"
+              id="loginPassword"
+              data-i18n-placeholder="placeholder_password"
+            />
+          </div>
+          <div class="form-actions">
+            <button
+              class="btn btn-blue"
+              style="flex: 1"
+              onclick="doLogin()"
+              data-i18n="login"
+            ></button>
+          </div>
+          <div style="text-align: center; margin-top: 16px">
+            <button
+              class="link-btn"
+              onclick="showForgotPassword()"
+              data-i18n="btn_forgot_password"
+            ></button>
+          </div>
+          <div
+            class="divider"
+            style="margin: 20px 0"
+            data-i18n="or_divider"
+          ></div>
+          <button
+            class="btn btn-gray"
+            style="width: 100%"
+            onclick="showRegister()"
+            data-i18n="btn_create_account"
+          ></button>
+        </div>
+
+        <div id="registerForm" style="display: none">
+          <h2 class="card-title" data-i18n="register_title"></h2>
+          <p class="card-subtitle" data-i18n="register_subtitle"></p>
+          <div class="form-group">
+            <label data-i18n="label_email"></label>
+            <input
+              type="email"
+              id="regEmail"
+              data-i18n-placeholder="placeholder_email"
+            />
+          </div>
+          <div class="form-group">
+            <label data-i18n="label_password"></label>
+            <input
+              type="password"
+              id="regPassword"
+              data-i18n-placeholder="placeholder_min8"
+            />
+          </div>
+          <div class="form-group">
+            <label data-i18n="label_confirm_password"></label>
+            <input
+              type="password"
+              id="regPasswordConfirm"
+              data-i18n-placeholder="placeholder_password"
+            />
+          </div>
+          <div class="form-actions">
+            <button
+              class="btn btn-gray"
+              onclick="showLogin()"
+              data-i18n="btn_back"
+            ></button>
+            <button
+              class="btn btn-blue"
+              style="flex: 1"
+              onclick="doRegister()"
+              data-i18n="register"
+            ></button>
+          </div>
+        </div>
+
+        <div id="forgotForm" style="display: none">
+          <h2 class="card-title" data-i18n="forgot_title"></h2>
+          <p class="card-subtitle" data-i18n="forgot_subtitle"></p>
+          <div class="form-group">
+            <label data-i18n="label_email"></label>
+            <input
+              type="email"
+              id="forgotEmail"
+              data-i18n-placeholder="placeholder_email"
+            />
+          </div>
+          <div class="form-actions">
+            <button
+              class="btn btn-gray"
+              onclick="showLogin()"
+              data-i18n="btn_back"
+            ></button>
+            <button
+              class="btn btn-blue"
+              style="flex: 1"
+              onclick="doForgotPassword()"
+              data-i18n="btn_reset_password"
+            ></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="credentialsModal">
+      <div class="modal-box">
+        <h2 class="card-title" style="color: #e65100">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <span data-i18n="credentials_title"></span>
+        </h2>
+        <p class="card-subtitle" data-i18n="credentials_subtitle"></p>
+        <div class="credentials-box">
+          <div class="credential-item">
+            <span class="credential-label" data-i18n="label_ref_number"></span>
+            <span class="credential-value" id="credRef"></span>
+          </div>
+          <div class="credential-item">
+            <span class="credential-label" data-i18n="label_token"></span>
+            <span
+              class="credential-value"
+              id="credToken"
+              style="font-size: 11px"
+            ></span>
+          </div>
+          <div class="credential-item">
+            <span class="credential-label" data-i18n="label_pin"></span>
+            <span class="credential-value" id="credPin"></span>
+          </div>
+        </div>
+        <button
+          class="btn btn-blue"
+          style="width: 100%; margin-top: 8px"
+          onclick="copyCredentials()"
+        >
+          <i class="fa-solid fa-copy"></i>
+          <span data-i18n="btn_copy_credentials"></span>
+        </button>
+        <button
+          class="btn btn-gray"
+          style="width: 100%; margin-top: 8px"
+          onclick="closeCredentials()"
+        >
+          <i class="fa-solid fa-check"></i>
+          <span data-i18n="btn_saved_credentials"></span>
+        </button>
+      </div>
+    </div>
+
+    <script>
+      api.init();
+      let currentStep = 1;
+      let currentLang = "de";
+
+      if (api.isLoggedIn()) {
+        const user = api.getUser();
+        if (user && user.role === "user")
+          window.location.href = "dashboard.html";
+        else if (user && (user.role === "admin" || user.role === "superadmin"))
+          window.location.href = "admin/index.html";
+      }
+
+      function applyLang() {
+        document.querySelectorAll("[data-i18n]").forEach((el) => {
+          const key = el.getAttribute("data-i18n");
+          if (LANG[key] !== undefined) el.textContent = LANG[key];
+        });
+        document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
+          const key = el.getAttribute("data-i18n-placeholder");
+          if (LANG[key] !== undefined) el.placeholder = LANG[key];
+        });
+        document.querySelectorAll("option[data-i18n]").forEach((el) => {
+          const key = el.getAttribute("data-i18n");
+          if (LANG[key] !== undefined) el.textContent = LANG[key];
+        });
+        document.title = LANG.app_name;
+      }
+
+      function switchLang() {
+        currentLang = currentLang === "de" ? "en" : "de";
+        const script = document.createElement("script");
+        script.src = "js/lang/" + currentLang + ".js";
+        script.onload = applyLang;
+        document.head.appendChild(script);
+      }
+
+      function openModal(id) {
+        document.getElementById(id).classList.add("active");
+      }
+      function closeModal(id) {
+        document.getElementById(id).classList.remove("active");
+      }
+      function openReportForm() {
+        goStep(1);
+        openModal("reportModal");
+      }
+      function openLogin() {
+        showLogin();
+        openModal("loginModal");
+      }
+
+      function showLogin() {
+        document.getElementById("loginForm").style.display = "block";
+        document.getElementById("registerForm").style.display = "none";
+        document.getElementById("forgotForm").style.display = "none";
+      }
+
+      function showRegister() {
+        document.getElementById("loginForm").style.display = "none";
+        document.getElementById("registerForm").style.display = "block";
+        document.getElementById("forgotForm").style.display = "none";
+      }
+
+      function showForgotPassword() {
+        document.getElementById("loginForm").style.display = "none";
+        document.getElementById("registerForm").style.display = "none";
+        document.getElementById("forgotForm").style.display = "block";
+      }
+
+      async function doLogin() {
+        const email = document.getElementById("loginEmail").value.trim();
+        const password = document.getElementById("loginPassword").value;
+        if (!email || !password)
+          return Swal.fire(LANG.warning_title, LANG.err_fill_all, "warning");
+        try {
+          const res = await api.login(email, password);
+          api.setToken(res.data.token);
+          api.setUser(res.data.user);
+          closeModal("loginModal");
+          if (res.data.user.role === "user")
+            window.location.href = "dashboard.html";
+          else window.location.href = "admin/index.html";
+        } catch (err) {
+          const msg = err.response?.data?.message || LANG.err_login_failed;
+          Swal.fire(LANG.error_title, msg, "error");
+        }
+      }
+
+      async function doRegister() {
+        const email = document.getElementById("regEmail").value.trim();
+        const password = document.getElementById("regPassword").value;
+        const confirm = document.getElementById("regPasswordConfirm").value;
+        if (!email || !password || !confirm)
+          return Swal.fire(LANG.warning_title, LANG.err_fill_all, "warning");
+        if (password !== confirm)
+          return Swal.fire(
+            LANG.warning_title,
+            LANG.err_passwords_mismatch,
+            "warning",
+          );
+        try {
+          const res = await api.register(email, password, confirm);
+          api.setToken(res.data.token);
+          api.setUser(res.data.user);
+          window.location.href = "dashboard.html";
+        } catch (err) {
+          const errors = err.response?.data?.errors;
+          const msg = errors
+            ? Object.values(errors).flat().join("\n")
+            : err.response?.data?.message || LANG.err_register_failed;
+          Swal.fire(LANG.error_title, msg, "error");
+        }
+      }
+
+      async function doForgotPassword() {
+        const email = document.getElementById("forgotEmail").value.trim();
+        if (!email)
+          return Swal.fire(LANG.warning_title, LANG.err_fill_all, "warning");
+        try {
+          await api.forgotPassword(email);
+          Swal.fire(
+            LANG.success_email_sent,
+            LANG.success_email_sent_text,
+            "success",
+          );
+          showLogin();
+        } catch (err) {
+          Swal.fire(LANG.error_title, LANG.err_generic, "error");
+        }
+      }
+
+      function goStep(step) {
+        if (step === 2) {
+          if (!document.getElementById("category").value)
+            return Swal.fire(
+              LANG.warning_title,
+              LANG.err_select_category,
+              "warning",
+            );
+          if (!document.getElementById("subject").value.trim())
+            return Swal.fire(
+              LANG.warning_title,
+              LANG.err_enter_subject,
+              "warning",
+            );
+        }
+        if (step === 3) {
+          if (document.getElementById("description").value.trim().length < 20)
+            return Swal.fire(
+              LANG.warning_title,
+              LANG.err_description_short,
+              "warning",
+            );
+        }
+        if (step === 4) {
+          const catMap = {
+            fraud: LANG.cat_fraud,
+            harassment: LANG.cat_harassment,
+            safety: LANG.cat_safety,
+            discrimination: LANG.cat_discrimination,
+            other: LANG.cat_other,
+          };
+          document.getElementById("summaryCategory").textContent =
+            catMap[document.getElementById("category").value] || "";
+          document.getElementById("summarySubject").textContent =
+            document.getElementById("subject").value;
+          document.getElementById("btnSubmitLoggedIn").style.display =
+            api.isLoggedIn() ? "block" : "none";
+        }
+        document
+          .querySelectorAll(".step-content")
+          .forEach((el) => el.classList.remove("active"));
+        document.getElementById("step" + step).classList.add("active");
+        document.querySelectorAll(".step-tab").forEach((tab, i) => {
+          tab.classList.remove("active", "done");
+          if (i + 1 < step) tab.classList.add("done");
+          if (i + 1 === step) tab.classList.add("active");
+        });
+        currentStep = step;
+      }
+
+      document
+        .getElementById("attachmentFile")
+        .addEventListener("change", function () {
+          if (this.files[0]) {
+            document.getElementById("attachmentName").textContent =
+              this.files[0].name;
+            document.getElementById("attachmentPreview").style.display =
+              "block";
+          }
+        });
+
+      async function submitReport(withAccount) {
+        if (withAccount && !api.isLoggedIn()) {
+          closeModal("reportModal");
+          openLogin();
+          return;
+        }
+        const data = {
+          category: document.getElementById("category").value,
+          subject: document.getElementById("subject").value.trim(),
+          description: document.getElementById("description").value.trim(),
+          incident_date:
+            document.getElementById("incidentDate").value || undefined,
+          incident_location:
+            document.getElementById("incidentLocation").value.trim() ||
+            undefined,
+          involved_persons:
+            document.getElementById("involvedPersons").value.trim() ||
+            undefined,
+        };
+        try {
+          const res = await api.submitReport(data);
+          const file = document.getElementById("attachmentFile").files[0];
+          if (file) {
+            try {
+              await api.uploadAttachment(res.data.reference_number, file);
+            } catch (e) {
+              console.warn("Attachment upload failed:", e);
+            }
+          }
+          closeModal("reportModal");
+          if (!withAccount && res.data.anonymous_access) {
+            document.getElementById("credRef").textContent =
+              res.data.reference_number;
+            document.getElementById("credToken").textContent =
+              res.data.anonymous_access.token;
+            document.getElementById("credPin").textContent =
+              res.data.anonymous_access.pin;
+            openModal("credentialsModal");
+          } else {
+            Swal.fire(
+              LANG.success_submitted_title,
+              LANG.success_submitted_text + res.data.reference_number,
+              "success",
+            ).then(() => (window.location.href = "dashboard.html"));
+          }
+        } catch (err) {
+          const errors = err.response?.data?.errors;
+          const msg = errors
+            ? Object.values(errors).flat().join("\n")
+            : err.response?.data?.message || LANG.err_generic;
+          Swal.fire(LANG.error_title, msg, "error");
+        }
+      }
+
+      function copyCredentials() {
+        const ref = document.getElementById("credRef").textContent;
+        const token = document.getElementById("credToken").textContent;
+        const pin = document.getElementById("credPin").textContent;
+        navigator.clipboard
+          .writeText(
+            LANG.label_ref_number +
+              ": " +
+              ref +
+              "\n" +
+              LANG.label_token +
+              ": " +
+              token +
+              "\n" +
+              LANG.label_pin +
+              ": " +
+              pin,
+          )
+          .then(() =>
+            Swal.fire(LANG.copied_title, LANG.copied_text, "success"),
+          );
+      }
+
+      function closeCredentials() {
+        closeModal("credentialsModal");
+        window.location.href = "track.html";
+      }
+
+      applyLang();
+    </script>
+  </body>
+</html>

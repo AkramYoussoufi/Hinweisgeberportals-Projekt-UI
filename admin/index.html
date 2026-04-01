@@ -1,0 +1,1235 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin — Hinweisgeberportal</title>
+    <script src="https://cdn.webix.com/edge/webix.js"></script>
+    <link rel="stylesheet" href="https://cdn.webix.com/edge/webix.css" />
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <script src="../js/config.js"></script>
+    <script src="../js/lang/de.js"></script>
+    <script src="../js/api.js"></script>
+    <link rel="stylesheet" href="../css/custom.css" />
+    <style>
+      .admin-layout {
+        display: flex;
+        min-height: calc(100vh - 56px);
+      }
+      .sidebar {
+        width: 240px;
+        background: #1a237e;
+        color: #fff;
+        padding: 24px 0;
+        flex-shrink: 0;
+      }
+      .sidebar-brand {
+        padding: 0 20px 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        margin-bottom: 16px;
+      }
+      .sidebar-brand p {
+        font-size: 11px;
+        opacity: 0.55;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .sidebar-brand h3 {
+        font-size: 14px;
+        font-weight: 600;
+      }
+      .sidebar-nav a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 20px;
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.2s;
+        cursor: pointer;
+        border: none;
+        background: none;
+        width: 100%;
+        text-align: left;
+      }
+      .sidebar-nav a:hover,
+      .sidebar-nav a.active {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+      }
+      .sidebar-nav a i {
+        width: 18px;
+        text-align: center;
+      }
+      .sidebar-divider {
+        height: 1px;
+        background: rgba(255, 255, 255, 0.1);
+        margin: 12px 0;
+      }
+      .main-content {
+        flex: 1;
+        padding: 32px;
+        overflow-y: auto;
+        background: #f0f2f5;
+      }
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+      }
+      .page-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #1a237e;
+      }
+      .filter-bar {
+        background: #fff;
+        border-radius: 8px;
+        padding: 16px 20px;
+        margin-bottom: 20px;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+      }
+      .filter-bar select,
+      .filter-bar input {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 13px;
+        font-family: inherit;
+        background: #fff;
+      }
+      .filter-bar select:focus,
+      .filter-bar input:focus {
+        outline: none;
+        border-color: #1a237e;
+      }
+      .filter-bar label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #555;
+      }
+      .reports-table {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+        overflow: hidden;
+      }
+      .table-header {
+        display: grid;
+        grid-template-columns: 140px 1fr 120px 120px 100px 80px;
+        padding: 12px 20px;
+        background: #f5f5f5;
+        font-size: 12px;
+        font-weight: 700;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 1px solid #e0e0e0;
+      }
+      .table-row {
+        display: grid;
+        grid-template-columns: 140px 1fr 120px 120px 100px 80px;
+        padding: 14px 20px;
+        border-bottom: 1px solid #f0f0f0;
+        align-items: center;
+        cursor: pointer;
+        transition: background 0.15s;
+        font-size: 13px;
+      }
+      .table-row:hover {
+        background: #f9f9ff;
+      }
+      .table-row:last-child {
+        border-bottom: none;
+      }
+      .ref-number {
+        font-family: monospace;
+        font-weight: 600;
+        color: #1a237e;
+        font-size: 12px;
+      }
+      .status-badge {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 600;
+      }
+      .status-received {
+        background: #e3f2fd;
+        color: #1565c0;
+      }
+      .status-reviewing {
+        background: #fff8e1;
+        color: #f57f17;
+      }
+      .status-clarification {
+        background: #fce4ec;
+        color: #c62828;
+      }
+      .status-closed {
+        background: #e8f5e9;
+        color: #2e7d32;
+      }
+      .anon-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 11px;
+        font-weight: 600;
+      }
+      .anon-yes {
+        background: #f3e5f5;
+        color: #6a1b9a;
+      }
+      .anon-no {
+        background: #e8f5e9;
+        color: #2e7d32;
+      }
+      .panel-overlay {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 580px;
+        height: 100%;
+        background: #fff;
+        box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+        z-index: 500;
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+        display: flex;
+        flex-direction: column;
+      }
+      .panel-overlay.open {
+        transform: translateX(0);
+      }
+      .panel-header {
+        background: #1a237e;
+        color: #fff;
+        padding: 20px 24px;
+        flex-shrink: 0;
+      }
+      .panel-header h2 {
+        font-size: 16px;
+        margin-bottom: 4px;
+      }
+      .panel-header p {
+        font-size: 12px;
+        opacity: 0.7;
+      }
+      .panel-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 24px;
+      }
+      .panel-close {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: #fff;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .panel-close:hover {
+        background: rgba(255, 255, 255, 0.35);
+      }
+      .panel-section {
+        margin-bottom: 24px;
+      }
+      .panel-section-title {
+        font-size: 11px;
+        font-weight: 700;
+        color: #999;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 12px;
+      }
+      .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .info-item label {
+        font-size: 11px;
+        font-weight: 600;
+        color: #999;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: block;
+        margin-bottom: 3px;
+      }
+      .info-item span {
+        font-size: 13px;
+        color: #333;
+        font-weight: 500;
+      }
+      .status-select {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 14px;
+        font-family: inherit;
+        background: #fff;
+      }
+      .status-select:focus {
+        outline: none;
+        border-color: #1a237e;
+      }
+      .tab-bar {
+        display: flex;
+        border-bottom: 2px solid #e0e0e0;
+        margin-bottom: 16px;
+      }
+      .tab-btn {
+        padding: 8px 16px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #999;
+        border: none;
+        background: none;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -2px;
+      }
+      .tab-btn.active {
+        color: #1a237e;
+        border-bottom-color: #1a237e;
+      }
+      .tab-panel {
+        display: none;
+      }
+      .tab-panel.active {
+        display: block;
+      }
+      .message-thread {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 12px;
+        height: 260px;
+        overflow-y: auto;
+        background: #fafafa;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        margin-bottom: 10px;
+      }
+      .message-bubble {
+        max-width: 80%;
+        padding: 8px 12px;
+        border-radius: 10px;
+        font-size: 13px;
+        line-height: 1.5;
+      }
+      .message-admin {
+        background: #1a237e;
+        color: #fff;
+        align-self: flex-end;
+        border-bottom-right-radius: 2px;
+      }
+      .message-whistleblower {
+        background: #e3f2fd;
+        color: #1a237e;
+        align-self: flex-start;
+        border-bottom-left-radius: 2px;
+      }
+      .message-time {
+        font-size: 10px;
+        opacity: 0.6;
+        margin-top: 3px;
+        text-align: right;
+      }
+      .message-input-row {
+        display: flex;
+        gap: 8px;
+      }
+      .message-input-row input {
+        flex: 1;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 13px;
+        font-family: inherit;
+      }
+      .message-input-row input:focus {
+        outline: none;
+        border-color: #1a237e;
+      }
+      .attachment-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 12px;
+        background: #f5f5f5;
+        border-radius: 6px;
+        font-size: 12px;
+        margin-bottom: 6px;
+      }
+      .attachment-item button {
+        background: #1a237e;
+        color: #fff;
+        border: none;
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-size: 11px;
+        cursor: pointer;
+      }
+      .backdrop {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.3);
+        z-index: 499;
+      }
+      .backdrop.active {
+        display: block;
+      }
+      .btn {
+        padding: 8px 20px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s;
+      }
+      .btn-blue {
+        background: #1a237e;
+        color: #fff;
+      }
+      .btn-blue:hover {
+        background: #283593;
+      }
+      .btn-green {
+        background: #43a047;
+        color: #fff;
+      }
+      .btn-green:hover {
+        background: #388e3c;
+      }
+      .btn-gray {
+        background: #f5f5f5;
+        color: #333;
+        border: 1px solid #ddd;
+      }
+      .btn-gray:hover {
+        background: #eeeeee;
+      }
+      .empty-state {
+        text-align: center;
+        padding: 48px;
+        color: #999;
+        font-size: 14px;
+      }
+      .empty-state i {
+        font-size: 48px;
+        color: #ddd;
+        margin-bottom: 16px;
+        display: block;
+      }
+      .stat-cards {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+      .stat-card {
+        background: #fff;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+        text-align: center;
+      }
+      .stat-card .stat-number {
+        font-size: 32px;
+        font-weight: 700;
+        color: #1a237e;
+      }
+      .stat-card .stat-label {
+        font-size: 12px;
+        color: #999;
+        margin-top: 4px;
+      }
+      @media (max-width: 960px) {
+        .sidebar {
+          display: none;
+        }
+        .stat-cards {
+          grid-template-columns: 1fr 1fr;
+        }
+        .table-header,
+        .table-row {
+          grid-template-columns: 120px 1fr 100px 80px;
+        }
+        .table-header > *:nth-child(3),
+        .table-row > *:nth-child(3),
+        .table-header > *:nth-child(4),
+        .table-row > *:nth-child(4) {
+          display: none;
+        }
+        .panel-overlay {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="logo">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span data-i18n="app_name"></span>
+        <span
+          style="
+            font-size: 11px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 8px;
+          "
+          data-i18n="admin_label"
+        ></span>
+      </div>
+      <div class="header-actions">
+        <button
+          class="lang-switcher"
+          onclick="switchLang()"
+          data-i18n="lang_switch"
+        ></button>
+        <button
+          class="btn-outline"
+          style="padding: 6px 16px; font-size: 13px"
+          onclick="doLogout()"
+        >
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span data-i18n="logout"></span>
+        </button>
+      </div>
+    </header>
+
+    <div class="admin-layout">
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <p data-i18n="admin_panel"></p>
+          <h3 id="adminRole"></h3>
+        </div>
+        <nav class="sidebar-nav">
+          <a class="active" onclick="showView('reports')">
+            <i class="fa-solid fa-inbox"></i>
+            <span data-i18n="all_reports"></span>
+          </a>
+          <div class="sidebar-divider"></div>
+          <a onclick="doLogout()">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span data-i18n="logout"></span>
+          </a>
+        </nav>
+      </aside>
+
+      <main class="main-content">
+        <div id="viewReports">
+          <div class="page-header">
+            <h1 class="page-title" data-i18n="all_reports"></h1>
+            <button class="btn btn-gray" onclick="loadReports()">
+              <i class="fa-solid fa-rotate"></i>
+              <span data-i18n="refresh"></span>
+            </button>
+          </div>
+
+          <div class="stat-cards">
+            <div class="stat-card">
+              <div class="stat-number" id="statTotal">—</div>
+              <div class="stat-label" data-i18n="stat_total"></div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="statReceived" style="color: #1565c0">
+                —
+              </div>
+              <div class="stat-label" data-i18n="status_received"></div>
+            </div>
+            <div class="stat-card">
+              <div
+                class="stat-number"
+                id="statReviewing"
+                style="color: #f57f17"
+              >
+                —
+              </div>
+              <div class="stat-label" data-i18n="status_reviewing"></div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="statClosed" style="color: #2e7d32">
+                —
+              </div>
+              <div class="stat-label" data-i18n="status_closed"></div>
+            </div>
+          </div>
+
+          <div class="filter-bar">
+            <label data-i18n="filter_status"></label>
+            <select id="filterStatus" onchange="loadReports()">
+              <option value="" data-i18n="filter_all"></option>
+              <option value="received" data-i18n="status_received"></option>
+              <option value="reviewing" data-i18n="status_reviewing"></option>
+              <option
+                value="clarification"
+                data-i18n="status_clarification"
+              ></option>
+              <option value="closed" data-i18n="status_closed"></option>
+            </select>
+            <label data-i18n="filter_category"></label>
+            <select id="filterCategory" onchange="loadReports()">
+              <option value="" data-i18n="filter_all"></option>
+              <option value="fraud" data-i18n="cat_fraud"></option>
+              <option value="harassment" data-i18n="cat_harassment"></option>
+              <option value="safety" data-i18n="cat_safety"></option>
+              <option
+                value="discrimination"
+                data-i18n="cat_discrimination"
+              ></option>
+              <option value="other" data-i18n="cat_other"></option>
+            </select>
+          </div>
+
+          <div class="reports-table">
+            <div class="table-header">
+              <span data-i18n="col_reference"></span>
+              <span data-i18n="col_subject"></span>
+              <span data-i18n="col_category"></span>
+              <span data-i18n="col_date"></span>
+              <span data-i18n="col_status"></span>
+              <span data-i18n="col_anon"></span>
+            </div>
+            <div id="reportsTableBody">
+              <div class="empty-state">
+                <i class="fa-solid fa-inbox"></i>
+                <span data-i18n="no_reports"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <div class="backdrop" id="backdrop" onclick="closePanel()"></div>
+
+    <div class="panel-overlay" id="reportPanel">
+      <div class="panel-header">
+        <button class="panel-close" onclick="closePanel()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+        <h2 id="panelSubject"></h2>
+        <p id="panelRef"></p>
+      </div>
+
+      <div class="panel-body">
+        <div class="panel-section">
+          <div class="panel-section-title" data-i18n="section_details"></div>
+          <div class="info-grid">
+            <div class="info-item">
+              <label data-i18n="label_category"></label>
+              <span id="panelCategory"></span>
+            </div>
+            <div class="info-item">
+              <label data-i18n="label_incident_date"></label>
+              <span id="panelDate"></span>
+            </div>
+            <div class="info-item">
+              <label data-i18n="label_incident_location"></label>
+              <span id="panelLocation"></span>
+            </div>
+            <div class="info-item">
+              <label data-i18n="label_involved_persons"></label>
+              <span id="panelPersons"></span>
+            </div>
+          </div>
+          <div style="margin-top: 12px">
+            <label
+              style="
+                font-size: 11px;
+                font-weight: 600;
+                color: #999;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+              "
+              data-i18n="label_description"
+            ></label>
+            <p
+              id="panelDescription"
+              style="
+                font-size: 13px;
+                color: #333;
+                margin-top: 6px;
+                line-height: 1.6;
+              "
+            ></p>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <div class="panel-section-title" data-i18n="section_status"></div>
+          <div style="display: flex; gap: 10px; align-items: center">
+            <select class="status-select" id="panelStatusSelect">
+              <option value="received" data-i18n="status_received"></option>
+              <option value="reviewing" data-i18n="status_reviewing"></option>
+              <option
+                value="clarification"
+                data-i18n="status_clarification"
+              ></option>
+              <option value="closed" data-i18n="status_closed"></option>
+            </select>
+            <button class="btn btn-green" onclick="updateStatus()">
+              <i class="fa-solid fa-check"></i>
+              <span data-i18n="btn_save_status"></span>
+            </button>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <div class="tab-bar">
+            <button
+              class="tab-btn active"
+              onclick="switchPanelTab('messages')"
+              data-i18n="messages"
+            ></button>
+            <button
+              class="tab-btn"
+              onclick="switchPanelTab('attachments')"
+              data-i18n="attachments"
+            ></button>
+          </div>
+
+          <div class="tab-panel active" id="panelTabMessages">
+            <div class="message-thread" id="panelMessageThread"></div>
+            <div class="message-input-row" id="panelMessageInputRow">
+              <input
+                type="text"
+                id="panelMessageInput"
+                data-i18n-placeholder="type_message"
+                onkeypress="if (event.key === 'Enter') sendAdminMessage();"
+              />
+              <button class="btn btn-blue" onclick="sendAdminMessage()">
+                <i class="fa-solid fa-paper-plane"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="tab-panel" id="panelTabAttachments">
+            <div id="panelAttachmentList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      api.init();
+      let currentLang = "de";
+      let currentReport = null;
+      let allReports = [];
+
+      const L = {
+        de: {
+          app_name: "Hinweisgeberportal",
+          admin_label: "Admin",
+          admin_panel: "Verwaltungsbereich",
+          lang_switch: "EN",
+          logout: "Abmelden",
+          all_reports: "Alle Hinweise",
+          refresh: "Aktualisieren",
+          stat_total: "Gesamt",
+          status_received: "Eingegangen",
+          status_reviewing: "In Prüfung",
+          status_clarification: "Rückfrage",
+          status_closed: "Abgeschlossen",
+          filter_status: "Status:",
+          filter_category: "Kategorie:",
+          filter_all: "Alle",
+          col_reference: "Vorgangsnr.",
+          col_subject: "Betreff",
+          col_category: "Kategorie",
+          col_date: "Eingegangen",
+          col_status: "Status",
+          col_anon: "Anonym",
+          no_reports: "Keine Hinweise vorhanden.",
+          section_details: "Details",
+          section_status: "Status verwalten",
+          label_category: "Kategorie",
+          label_incident_date: "Datum",
+          label_incident_location: "Ort",
+          label_involved_persons: "Beteiligte",
+          label_description: "Beschreibung",
+          messages: "Nachrichten",
+          attachments: "Anhänge",
+          no_messages: "Noch keine Nachrichten.",
+          no_attachments: "Keine Anhänge.",
+          type_message: "Nachricht eingeben...",
+          download: "Herunterladen",
+          btn_save_status: "Speichern",
+          cat_fraud: "Betrug",
+          cat_harassment: "Belästigung",
+          cat_safety: "Sicherheit",
+          cat_discrimination: "Diskriminierung",
+          cat_other: "Sonstiges",
+          anon_yes: "Ja",
+          anon_no: "Nein",
+          err_generic: "Ein Fehler ist aufgetreten.",
+          success_status: "Status erfolgreich aktualisiert.",
+          error_title: "Fehler",
+          success_title: "Erfolg",
+          warning_title: "Hinweis",
+          confirm_logout: "Möchten Sie sich wirklich abmelden?",
+          yes_logout: "Ja, abmelden",
+          cancel: "Abbrechen",
+          role_admin: "Administrator",
+          role_superadmin: "Superadministrator",
+        },
+        en: {
+          app_name: "Whistleblower Portal",
+          admin_label: "Admin",
+          admin_panel: "Administration Panel",
+          lang_switch: "DE",
+          logout: "Logout",
+          all_reports: "All Reports",
+          refresh: "Refresh",
+          stat_total: "Total",
+          status_received: "Received",
+          status_reviewing: "Under Review",
+          status_clarification: "Clarification",
+          status_closed: "Closed",
+          filter_status: "Status:",
+          filter_category: "Category:",
+          filter_all: "All",
+          col_reference: "Reference",
+          col_subject: "Subject",
+          col_category: "Category",
+          col_date: "Submitted",
+          col_status: "Status",
+          col_anon: "Anon",
+          no_reports: "No reports found.",
+          section_details: "Details",
+          section_status: "Manage Status",
+          label_category: "Category",
+          label_incident_date: "Date",
+          label_incident_location: "Location",
+          label_involved_persons: "Involved Persons",
+          label_description: "Description",
+          messages: "Messages",
+          attachments: "Attachments",
+          no_messages: "No messages yet.",
+          no_attachments: "No attachments.",
+          type_message: "Type a message...",
+          download: "Download",
+          btn_save_status: "Save",
+          cat_fraud: "Fraud",
+          cat_harassment: "Harassment",
+          cat_safety: "Safety",
+          cat_discrimination: "Discrimination",
+          cat_other: "Other",
+          anon_yes: "Yes",
+          anon_no: "No",
+          err_generic: "An error occurred.",
+          success_status: "Status updated successfully.",
+          error_title: "Error",
+          success_title: "Success",
+          warning_title: "Warning",
+          confirm_logout: "Are you sure you want to logout?",
+          yes_logout: "Yes, logout",
+          cancel: "Cancel",
+          role_admin: "Administrator",
+          role_superadmin: "Super Administrator",
+        },
+      };
+
+      let T = L.de;
+
+      if (!api.isLoggedIn()) window.location.href = "../index.html";
+
+      const user = api.getUser();
+      if (user && user.role === "user")
+        window.location.href = "../dashboard.html";
+
+      function applyLang() {
+        document.querySelectorAll("[data-i18n]").forEach((el) => {
+          const key = el.getAttribute("data-i18n");
+          if (T[key] !== undefined) el.textContent = T[key];
+        });
+        document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
+          const key = el.getAttribute("data-i18n-placeholder");
+          if (T[key] !== undefined) el.placeholder = T[key];
+        });
+        document.querySelectorAll("option[data-i18n]").forEach((el) => {
+          const key = el.getAttribute("data-i18n");
+          if (T[key] !== undefined) el.textContent = T[key];
+        });
+        document.title = T.app_name + " — Admin";
+        if (user) {
+          document.getElementById("adminRole").textContent =
+            user.role === "superadmin" ? T.role_superadmin : T.role_admin;
+        }
+      }
+
+      function switchLang() {
+        currentLang = currentLang === "de" ? "en" : "de";
+        T = L[currentLang];
+        applyLang();
+        renderTable(allReports);
+        if (currentReport) renderPanel(currentReport);
+      }
+
+      function showView(view) {
+        document
+          .querySelectorAll(".sidebar-nav a")
+          .forEach((a) => a.classList.remove("active"));
+        event.currentTarget.classList.add("active");
+        if (view === "reports") loadReports();
+      }
+
+      async function loadReports() {
+        const status = document.getElementById("filterStatus").value;
+        const category = document.getElementById("filterCategory").value;
+        const filters = {};
+        if (status) filters.status = status;
+        if (category) filters.category = category;
+
+        try {
+          const res = await api.adminGetReports(filters);
+          allReports = res.data.reports;
+          renderTable(allReports);
+          updateStats(allReports);
+        } catch (e) {
+          Swal.fire(T.error_title, T.err_generic, "error");
+        }
+      }
+
+      function updateStats(reports) {
+        document.getElementById("statTotal").textContent = reports.length;
+        document.getElementById("statReceived").textContent = reports.filter(
+          (r) => r.status === "received",
+        ).length;
+        document.getElementById("statReviewing").textContent = reports.filter(
+          (r) => r.status === "reviewing" || r.status === "clarification",
+        ).length;
+        document.getElementById("statClosed").textContent = reports.filter(
+          (r) => r.status === "closed",
+        ).length;
+      }
+
+      function renderTable(reports) {
+        const body = document.getElementById("reportsTableBody");
+        const catMap = {
+          fraud: T.cat_fraud,
+          harassment: T.cat_harassment,
+          safety: T.cat_safety,
+          discrimination: T.cat_discrimination,
+          other: T.cat_other,
+        };
+        const statusMap = {
+          received: T.status_received,
+          reviewing: T.status_reviewing,
+          clarification: T.status_clarification,
+          closed: T.status_closed,
+        };
+        const statusClass = {
+          received: "status-received",
+          reviewing: "status-reviewing",
+          clarification: "status-clarification",
+          closed: "status-closed",
+        };
+
+        if (!reports.length) {
+          body.innerHTML =
+            '<div class="empty-state"><i class="fa-solid fa-inbox"></i><span>' +
+            T.no_reports +
+            "</span></div>";
+          return;
+        }
+
+        body.innerHTML = reports
+          .map((r) => {
+            const date = new Date(r.created_at).toLocaleDateString(
+              currentLang === "de" ? "de-DE" : "en-GB",
+            );
+            const anonClass = r.is_anonymous ? "anon-yes" : "anon-no";
+            const anonText = r.is_anonymous ? T.anon_yes : T.anon_no;
+            return (
+              '<div class="table-row" onclick="openReport(\'' +
+              r.reference_number +
+              "')\">" +
+              '<span class="ref-number">' +
+              r.reference_number +
+              "</span>" +
+              '<span style="font-weight:500;color:#333">' +
+              r.subject +
+              "</span>" +
+              "<span>" +
+              (catMap[r.category] || r.category) +
+              "</span>" +
+              '<span style="color:#666">' +
+              date +
+              "</span>" +
+              '<span><span class="status-badge ' +
+              (statusClass[r.status] || "") +
+              '">' +
+              (statusMap[r.status] || r.status) +
+              "</span></span>" +
+              '<span><span class="anon-badge ' +
+              anonClass +
+              '">' +
+              anonText +
+              "</span></span>" +
+              "</div>"
+            );
+          })
+          .join("");
+      }
+
+      async function openReport(ref) {
+        try {
+          const res = await api.adminGetReport(ref);
+          currentReport = res.data;
+          renderPanel(currentReport);
+          document.getElementById("reportPanel").classList.add("open");
+          document.getElementById("backdrop").classList.add("active");
+          await loadPanelMessages(ref);
+          await loadPanelAttachments(ref);
+          switchPanelTab("messages");
+        } catch (e) {
+          Swal.fire(T.error_title, T.err_generic, "error");
+        }
+      }
+
+      function renderPanel(report) {
+        const catMap = {
+          fraud: T.cat_fraud,
+          harassment: T.cat_harassment,
+          safety: T.cat_safety,
+          discrimination: T.cat_discrimination,
+          other: T.cat_other,
+        };
+
+        document.getElementById("panelSubject").textContent = report.subject;
+        document.getElementById("panelRef").textContent =
+          report.reference_number;
+        document.getElementById("panelCategory").textContent =
+          catMap[report.category] || report.category;
+        document.getElementById("panelDate").textContent = report.incident_date
+          ? report.incident_date.split("T")[0]
+          : "—";
+        document.getElementById("panelLocation").textContent =
+          report.incident_location || "—";
+        document.getElementById("panelPersons").textContent =
+          report.involved_persons || "—";
+        document.getElementById("panelDescription").textContent =
+          report.description;
+        document.getElementById("panelStatusSelect").value = report.status;
+
+        const isClosed = report.status === "closed";
+        document.getElementById("panelMessageInputRow").style.display = isClosed
+          ? "none"
+          : "flex";
+      }
+
+      function closePanel() {
+        document.getElementById("reportPanel").classList.remove("open");
+        document.getElementById("backdrop").classList.remove("active");
+        currentReport = null;
+      }
+
+      function switchPanelTab(tab) {
+        document.querySelectorAll(".tab-btn").forEach((b, i) => {
+          b.classList.toggle(
+            "active",
+            (i === 0 && tab === "messages") ||
+              (i === 1 && tab === "attachments"),
+          );
+        });
+        document
+          .getElementById("panelTabMessages")
+          .classList.toggle("active", tab === "messages");
+        document
+          .getElementById("panelTabAttachments")
+          .classList.toggle("active", tab === "attachments");
+      }
+
+      async function loadPanelMessages(ref) {
+        try {
+          const res = await api.adminGetMessages(ref);
+          const thread = document.getElementById("panelMessageThread");
+          const messages = res.data.messages;
+
+          if (!messages.length) {
+            thread.innerHTML =
+              '<div class="empty-state" style="padding:24px">' +
+              T.no_messages +
+              "</div>";
+            return;
+          }
+
+          thread.innerHTML = messages
+            .map((m) => {
+              const isAdmin = m.sender_role === "admin";
+              const time = new Date(m.created_at).toLocaleString(
+                currentLang === "de" ? "de-DE" : "en-GB",
+                {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                },
+              );
+              return (
+                '<div class="message-bubble ' +
+                (isAdmin ? "message-admin" : "message-whistleblower") +
+                '">' +
+                m.body +
+                '<div class="message-time">' +
+                time +
+                "</div>" +
+                "</div>"
+              );
+            })
+            .join("");
+
+          thread.scrollTop = thread.scrollHeight;
+        } catch (e) {
+          console.warn("Load messages failed:", e);
+        }
+      }
+
+      async function loadPanelAttachments(ref) {
+        try {
+          const res = await api.adminGetAttachments(ref);
+          const list = document.getElementById("panelAttachmentList");
+          const attachments = res.data.attachments;
+
+          if (!attachments.length) {
+            list.innerHTML =
+              '<div class="empty-state" style="padding:24px">' +
+              T.no_attachments +
+              "</div>";
+            return;
+          }
+
+          list.innerHTML = attachments
+            .map((a) => {
+              const size = (a.size / 1024).toFixed(1) + " KB";
+              return (
+                '<div class="attachment-item">' +
+                '<span><i class="fa-solid fa-paperclip"></i> ' +
+                a.original_filename +
+                ' <small style="color:#999">(' +
+                size +
+                ")</small></span>" +
+                "<button onclick=\"downloadFile('" +
+                a.id +
+                "', '" +
+                a.original_filename +
+                "')\">" +
+                '<i class="fa-solid fa-download"></i> ' +
+                T.download +
+                "</button>" +
+                "</div>"
+              );
+            })
+            .join("");
+        } catch (e) {
+          console.warn("Load attachments failed:", e);
+        }
+      }
+
+      async function sendAdminMessage() {
+        const input = document.getElementById("panelMessageInput");
+        const body = input.value.trim();
+        if (!body || !currentReport) return;
+        try {
+          await api.adminSendMessage(currentReport.reference_number, body);
+          input.value = "";
+          await loadPanelMessages(currentReport.reference_number);
+        } catch (e) {
+          Swal.fire(T.error_title, T.err_generic, "error");
+        }
+      }
+
+      async function updateStatus() {
+        if (!currentReport) return;
+        const status = document.getElementById("panelStatusSelect").value;
+        try {
+          await api.adminUpdateStatus(currentReport.reference_number, status);
+          currentReport.status = status;
+          Swal.fire({
+            icon: "success",
+            title: T.success_title,
+            text: T.success_status,
+            timer: 1500,
+            showConfirmButton: false,
+          });
+          document.getElementById("panelMessageInputRow").style.display =
+            status === "closed" ? "none" : "flex";
+          loadReports();
+        } catch (e) {
+          Swal.fire(T.error_title, T.err_generic, "error");
+        }
+      }
+
+      async function downloadFile(id, filename) {
+        try {
+          const res = await api.downloadAttachment(id);
+          const url = window.URL.createObjectURL(new Blob([res.data]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", filename);
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          window.URL.revokeObjectURL(url);
+        } catch (e) {
+          Swal.fire(T.error_title, T.err_generic, "error");
+        }
+      }
+
+      async function doLogout() {
+        const result = await Swal.fire({
+          title: T.confirm_logout,
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: T.yes_logout,
+          cancelButtonText: T.cancel,
+          confirmButtonColor: "#1a237e",
+        });
+        if (!result.isConfirmed) return;
+        try {
+          await api.logout();
+        } catch (e) {}
+        api.clearToken();
+        window.location.href = "../index.html";
+      }
+
+      applyLang();
+      loadReports();
+    </script>
+  </body>
+</html>

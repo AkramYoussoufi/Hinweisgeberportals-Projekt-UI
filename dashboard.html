@@ -1,0 +1,967 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hinweisgeberportal</title>
+    <script src="https://cdn.webix.com/edge/webix.js"></script>
+    <link rel="stylesheet" href="https://cdn.webix.com/edge/webix.css" />
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <script src="js/config.js"></script>
+    <script src="js/lang/de.js"></script>
+    <script src="js/api.js"></script>
+    <link rel="stylesheet" href="css/custom.css" />
+    <style>
+      .dashboard-layout {
+        display: flex;
+        min-height: calc(100vh - 56px);
+      }
+      .sidebar {
+        width: 260px;
+        background: #1a237e;
+        color: #fff;
+        padding: 24px 0;
+        flex-shrink: 0;
+      }
+      .sidebar-user {
+        padding: 0 20px 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        margin-bottom: 16px;
+      }
+      .sidebar-user p {
+        font-size: 12px;
+        opacity: 0.6;
+        margin-bottom: 4px;
+      }
+      .sidebar-user h3 {
+        font-size: 15px;
+        font-weight: 600;
+        word-break: break-all;
+      }
+      .sidebar-nav a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 20px;
+        color: rgba(255, 255, 255, 0.75);
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.2s;
+        cursor: pointer;
+      }
+      .sidebar-nav a:hover,
+      .sidebar-nav a.active {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+      }
+      .sidebar-nav a i {
+        width: 18px;
+        text-align: center;
+      }
+      .main-content {
+        flex: 1;
+        padding: 32px;
+        overflow-y: auto;
+      }
+      .page-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #1a237e;
+        margin-bottom: 24px;
+      }
+      .reports-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .report-card {
+        background: #fff;
+        border-radius: 8px;
+        padding: 20px 24px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+        cursor: pointer;
+        transition: box-shadow 0.2s;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .report-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+      }
+      .report-card-left h3 {
+        font-size: 15px;
+        font-weight: 600;
+        color: #1a237e;
+        margin-bottom: 4px;
+      }
+      .report-card-left p {
+        font-size: 13px;
+        color: #666;
+      }
+      .report-card-right {
+        text-align: right;
+      }
+      .report-card-right small {
+        display: block;
+        font-size: 12px;
+        color: #999;
+        margin-top: 6px;
+      }
+      .status-badge {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .status-received {
+        background: #e3f2fd;
+        color: #1565c0;
+      }
+      .status-reviewing {
+        background: #fff8e1;
+        color: #f57f17;
+      }
+      .status-clarification {
+        background: #fce4ec;
+        color: #c62828;
+      }
+      .status-closed {
+        background: #e8f5e9;
+        color: #2e7d32;
+      }
+      .detail-view {
+        display: none;
+      }
+      .detail-view.active {
+        display: block;
+      }
+      .list-view {
+        display: block;
+      }
+      .list-view.hidden {
+        display: none;
+      }
+      .report-detail-header {
+        background: #1a237e;
+        color: #fff;
+        border-radius: 8px 8px 0 0;
+        padding: 20px 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+      .report-detail-header h2 {
+        font-size: 18px;
+        margin-bottom: 4px;
+      }
+      .report-detail-header p {
+        font-size: 13px;
+        opacity: 0.75;
+      }
+      .report-detail-body {
+        background: #fff;
+        border-radius: 0 0 8px 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        padding: 24px;
+      }
+      .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 20px;
+      }
+      .info-item label {
+        font-size: 11px;
+        font-weight: 600;
+        color: #999;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: block;
+        margin-bottom: 4px;
+      }
+      .info-item span {
+        font-size: 14px;
+        color: #333;
+        font-weight: 500;
+      }
+      .tab-bar {
+        display: flex;
+        border-bottom: 2px solid #e0e0e0;
+        margin-bottom: 20px;
+      }
+      .tab-btn {
+        padding: 10px 20px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #999;
+        border: none;
+        background: none;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -2px;
+      }
+      .tab-btn.active {
+        color: #1a237e;
+        border-bottom-color: #1a237e;
+      }
+      .tab-panel {
+        display: none;
+      }
+      .tab-panel.active {
+        display: block;
+      }
+      .message-thread {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 16px;
+        height: 300px;
+        overflow-y: auto;
+        background: #fafafa;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        margin-bottom: 12px;
+      }
+      .message-bubble {
+        max-width: 75%;
+        padding: 10px 14px;
+        border-radius: 12px;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      .message-admin {
+        background: #e3f2fd;
+        color: #1a237e;
+        align-self: flex-start;
+        border-bottom-left-radius: 2px;
+      }
+      .message-whistleblower {
+        background: #1a237e;
+        color: #fff;
+        align-self: flex-end;
+        border-bottom-right-radius: 2px;
+      }
+      .message-time {
+        font-size: 10px;
+        opacity: 0.6;
+        margin-top: 4px;
+        text-align: right;
+      }
+      .message-input-row {
+        display: flex;
+        gap: 8px;
+      }
+      .message-input-row input {
+        flex: 1;
+        padding: 10px 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 14px;
+        font-family: inherit;
+      }
+      .message-input-row input:focus {
+        outline: none;
+        border-color: #1a237e;
+      }
+      .attachment-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .attachment-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 14px;
+        background: #f5f5f5;
+        border-radius: 6px;
+        font-size: 13px;
+      }
+      .attachment-item button {
+        background: #1a237e;
+        color: #fff;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 12px;
+        cursor: pointer;
+      }
+      .attachment-item button:hover {
+        background: #283593;
+      }
+      .btn {
+        padding: 10px 24px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s;
+      }
+      .btn-blue {
+        background: #1a237e;
+        color: #fff;
+      }
+      .btn-blue:hover {
+        background: #283593;
+      }
+      .btn-gray {
+        background: #f5f5f5;
+        color: #333;
+        border: 1px solid #ddd;
+      }
+      .btn-gray:hover {
+        background: #eeeeee;
+      }
+      .btn-sm {
+        padding: 6px 14px;
+        font-size: 13px;
+      }
+      .empty-state {
+        text-align: center;
+        padding: 48px;
+        color: #999;
+        font-size: 14px;
+      }
+      .empty-state i {
+        font-size: 48px;
+        color: #ddd;
+        margin-bottom: 16px;
+        display: block;
+      }
+      @media (max-width: 768px) {
+        .dashboard-layout {
+          flex-direction: column;
+        }
+        .sidebar {
+          width: 100%;
+          padding: 12px 0;
+        }
+        .sidebar-nav {
+          display: flex;
+          overflow-x: auto;
+        }
+        .sidebar-nav a {
+          white-space: nowrap;
+        }
+        .main-content {
+          padding: 16px;
+        }
+        .info-grid {
+          grid-template-columns: 1fr;
+        }
+        .message-bubble {
+          max-width: 90%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="logo">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span data-i18n="app_name"></span>
+      </div>
+      <div class="header-actions">
+        <button
+          class="lang-switcher"
+          onclick="switchLang()"
+          data-i18n="lang_switch"
+        ></button>
+        <button
+          class="btn-outline"
+          style="padding: 6px 16px; font-size: 13px"
+          onclick="doLogout()"
+        >
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span data-i18n="logout"></span>
+        </button>
+      </div>
+    </header>
+
+    <div class="dashboard-layout">
+      <aside class="sidebar">
+        <div class="sidebar-user">
+          <p data-i18n="logged_in_as"></p>
+          <h3 id="sidebarEmail"></h3>
+        </div>
+        <nav class="sidebar-nav">
+          <a class="active" onclick="showListView()">
+            <i class="fa-solid fa-list"></i>
+            <span data-i18n="my_reports"></span>
+          </a>
+          <a onclick="openNewReport()">
+            <i class="fa-solid fa-plus"></i>
+            <span data-i18n="new_report"></span>
+          </a>
+        </nav>
+      </aside>
+
+      <main class="main-content">
+        <div class="list-view" id="listView">
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 24px;
+            "
+          >
+            <h1
+              class="page-title"
+              style="margin-bottom: 0"
+              data-i18n="my_reports"
+            ></h1>
+            <button class="btn btn-blue btn-sm" onclick="openNewReport()">
+              <i class="fa-solid fa-plus"></i>
+              <span data-i18n="new_report"></span>
+            </button>
+          </div>
+          <div class="reports-grid" id="reportsGrid">
+            <div class="empty-state">
+              <i class="fa-solid fa-folder-open"></i>
+              <span data-i18n="no_reports"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-view" id="detailView">
+          <div style="margin-bottom: 20px">
+            <button class="btn btn-gray btn-sm" onclick="showListView()">
+              <i class="fa-solid fa-arrow-left"></i>
+              <span data-i18n="btn_back"></span>
+            </button>
+          </div>
+
+          <div class="report-detail-header">
+            <div>
+              <h2 id="detailSubject"></h2>
+              <p id="detailRef"></p>
+            </div>
+            <span id="detailStatusBadge" class="status-badge"></span>
+          </div>
+
+          <div class="report-detail-body">
+            <div class="info-grid">
+              <div class="info-item">
+                <label data-i18n="label_category"></label>
+                <span id="detailCategory"></span>
+              </div>
+              <div class="info-item">
+                <label data-i18n="label_incident_date"></label>
+                <span id="detailDate"></span>
+              </div>
+              <div class="info-item">
+                <label data-i18n="label_incident_location"></label>
+                <span id="detailLocation"></span>
+              </div>
+              <div class="info-item">
+                <label data-i18n="label_involved_persons"></label>
+                <span id="detailPersons"></span>
+              </div>
+            </div>
+
+            <div style="margin-bottom: 20px">
+              <label
+                style="
+                  font-size: 11px;
+                  font-weight: 600;
+                  color: #999;
+                  text-transform: uppercase;
+                  letter-spacing: 0.5px;
+                "
+                data-i18n="label_description"
+              ></label>
+              <p
+                id="detailDescription"
+                style="
+                  font-size: 14px;
+                  color: #333;
+                  margin-top: 6px;
+                  line-height: 1.6;
+                "
+              ></p>
+            </div>
+
+            <div class="tab-bar">
+              <button
+                class="tab-btn active"
+                onclick="switchTab('messages')"
+                data-i18n="messages"
+              ></button>
+              <button
+                class="tab-btn"
+                onclick="switchTab('attachments')"
+                data-i18n="attachments"
+              ></button>
+            </div>
+
+            <div class="tab-panel active" id="tabMessages">
+              <div class="message-thread" id="messageThread"></div>
+              <div class="message-input-row" id="messageInputRow">
+                <input
+                  type="text"
+                  id="messageInput"
+                  data-i18n-placeholder="type_message"
+                  onkeypress="if (event.key === 'Enter') sendMessage();"
+                />
+                <button class="btn btn-blue" onclick="sendMessage()">
+                  <i class="fa-solid fa-paper-plane"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="tab-panel" id="tabAttachments">
+              <div class="attachment-list" id="attachmentList"></div>
+              <div style="margin-top: 16px">
+                <input
+                  type="file"
+                  id="newAttachment"
+                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.mp4,.mp3,.wav"
+                  style="display: none"
+                  onchange="uploadAttachment()"
+                />
+                <button
+                  class="btn btn-gray btn-sm"
+                  onclick="document.getElementById('newAttachment').click()"
+                >
+                  <i class="fa-solid fa-paperclip"></i>
+                  <span data-i18n="attach_file"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      api.init();
+      let currentLang = "de";
+      let currentReport = null;
+
+      const L = {
+        de: {
+          app_name: "Hinweisgeberportal",
+          lang_switch: "EN",
+          logout: "Abmelden",
+          logged_in_as: "Angemeldet als",
+          my_reports: "Meine Hinweise",
+          new_report: "Neuer Hinweis",
+          no_reports: "Keine Hinweise vorhanden.",
+          btn_back: "Zurück",
+          label_category: "Kategorie",
+          label_incident_date: "Datum des Vorfalls",
+          label_incident_location: "Ort des Vorfalls",
+          label_involved_persons: "Beteiligte Personen",
+          label_description: "Beschreibung",
+          messages: "Nachrichten",
+          attachments: "Anhänge",
+          no_messages: "Noch keine Nachrichten.",
+          no_attachments: "Keine Anhänge vorhanden.",
+          type_message: "Nachricht eingeben...",
+          attach_file: "Datei anhängen",
+          download: "Herunterladen",
+          status_received: "Eingegangen",
+          status_reviewing: "In Prüfung",
+          status_clarification: "Rückfrage",
+          status_closed: "Abgeschlossen",
+          cat_fraud: "Betrug",
+          cat_harassment: "Belästigung",
+          cat_safety: "Sicherheit",
+          cat_discrimination: "Diskriminierung",
+          cat_other: "Sonstiges",
+          err_generic: "Ein Fehler ist aufgetreten.",
+          error_title: "Fehler",
+          warning_title: "Hinweis",
+          confirm_logout: "Möchten Sie sich wirklich abmelden?",
+          yes_logout: "Ja, abmelden",
+          cancel: "Abbrechen",
+        },
+        en: {
+          app_name: "Whistleblower Portal",
+          lang_switch: "DE",
+          logout: "Logout",
+          logged_in_as: "Logged in as",
+          my_reports: "My Reports",
+          new_report: "New Report",
+          no_reports: "No reports found.",
+          btn_back: "Back",
+          label_category: "Category",
+          label_incident_date: "Date of Incident",
+          label_incident_location: "Location of Incident",
+          label_involved_persons: "Involved Persons",
+          label_description: "Description",
+          messages: "Messages",
+          attachments: "Attachments",
+          no_messages: "No messages yet.",
+          no_attachments: "No attachments found.",
+          type_message: "Type a message...",
+          attach_file: "Attach File",
+          download: "Download",
+          status_received: "Received",
+          status_reviewing: "Under Review",
+          status_clarification: "Clarification Needed",
+          status_closed: "Closed",
+          cat_fraud: "Fraud",
+          cat_harassment: "Harassment",
+          cat_safety: "Safety",
+          cat_discrimination: "Discrimination",
+          cat_other: "Other",
+          err_generic: "An error occurred.",
+          error_title: "Error",
+          warning_title: "Warning",
+          confirm_logout: "Are you sure you want to logout?",
+          yes_logout: "Yes, logout",
+          cancel: "Cancel",
+        },
+      };
+
+      let T = L.de;
+
+      if (!api.isLoggedIn()) window.location.href = "index.html";
+
+      const user = api.getUser();
+      if (user && (user.role === "admin" || user.role === "superadmin")) {
+        window.location.href = "admin/index.html";
+      }
+
+      function applyLang() {
+        document.querySelectorAll("[data-i18n]").forEach((el) => {
+          const key = el.getAttribute("data-i18n");
+          if (T[key] !== undefined) el.textContent = T[key];
+        });
+        document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
+          const key = el.getAttribute("data-i18n-placeholder");
+          if (T[key] !== undefined) el.placeholder = T[key];
+        });
+        document.title = T.app_name;
+      }
+
+      function switchLang() {
+        currentLang = currentLang === "de" ? "en" : "de";
+        T = L[currentLang];
+        applyLang();
+        loadReports();
+        if (currentReport) renderDetail(currentReport);
+      }
+
+      function switchTab(tab) {
+        document.querySelectorAll(".tab-btn").forEach((b, i) => {
+          b.classList.toggle(
+            "active",
+            (i === 0 && tab === "messages") ||
+              (i === 1 && tab === "attachments"),
+          );
+        });
+        document
+          .getElementById("tabMessages")
+          .classList.toggle("active", tab === "messages");
+        document
+          .getElementById("tabAttachments")
+          .classList.toggle("active", tab === "attachments");
+      }
+
+      function showListView() {
+        document.getElementById("listView").classList.remove("hidden");
+        document.getElementById("detailView").classList.remove("active");
+        currentReport = null;
+        loadReports();
+      }
+
+      function showDetailView() {
+        document.getElementById("listView").classList.add("hidden");
+        document.getElementById("detailView").classList.add("active");
+      }
+
+      async function loadReports() {
+        try {
+          const res = await api.getReports();
+          const reports = res.data.reports;
+          const grid = document.getElementById("reportsGrid");
+
+          if (!reports.length) {
+            grid.innerHTML =
+              '<div class="empty-state"><i class="fa-solid fa-folder-open"></i><span>' +
+              T.no_reports +
+              "</span></div>";
+            return;
+          }
+
+          const statusMap = {
+            received: T.status_received,
+            reviewing: T.status_reviewing,
+            clarification: T.status_clarification,
+            closed: T.status_closed,
+          };
+          const statusClass = {
+            received: "status-received",
+            reviewing: "status-reviewing",
+            clarification: "status-clarification",
+            closed: "status-closed",
+          };
+          const catMap = {
+            fraud: T.cat_fraud,
+            harassment: T.cat_harassment,
+            safety: T.cat_safety,
+            discrimination: T.cat_discrimination,
+            other: T.cat_other,
+          };
+
+          grid.innerHTML = reports
+            .map((r) => {
+              const date = new Date(r.created_at).toLocaleDateString(
+                currentLang === "de" ? "de-DE" : "en-GB",
+              );
+              return (
+                '<div class="report-card" onclick="openReport(\'' +
+                r.reference_number +
+                "')\">" +
+                '<div class="report-card-left">' +
+                "<h3>" +
+                r.subject +
+                "</h3>" +
+                "<p>" +
+                (catMap[r.category] || r.category) +
+                " &nbsp;·&nbsp; " +
+                r.reference_number +
+                "</p>" +
+                "</div>" +
+                '<div class="report-card-right">' +
+                '<span class="status-badge ' +
+                (statusClass[r.status] || "") +
+                '">' +
+                (statusMap[r.status] || r.status) +
+                "</span>" +
+                "<small>" +
+                date +
+                "</small>" +
+                "</div>" +
+                "</div>"
+              );
+            })
+            .join("");
+        } catch (e) {
+          console.warn("Load reports failed:", e);
+        }
+      }
+
+      async function openReport(ref) {
+        try {
+          const res = await api.getReport(ref);
+          currentReport = res.data;
+          renderDetail(currentReport);
+          showDetailView();
+          await loadMessages(ref);
+          await loadAttachments(ref);
+          switchTab("messages");
+        } catch (e) {
+          Swal.fire(T.error_title, T.err_generic, "error");
+        }
+      }
+
+      function renderDetail(report) {
+        const statusMap = {
+          received: T.status_received,
+          reviewing: T.status_reviewing,
+          clarification: T.status_clarification,
+          closed: T.status_closed,
+        };
+        const statusClass = {
+          received: "status-received",
+          reviewing: "status-reviewing",
+          clarification: "status-clarification",
+          closed: "status-closed",
+        };
+        const catMap = {
+          fraud: T.cat_fraud,
+          harassment: T.cat_harassment,
+          safety: T.cat_safety,
+          discrimination: T.cat_discrimination,
+          other: T.cat_other,
+        };
+
+        document.getElementById("detailSubject").textContent = report.subject;
+        document.getElementById("detailRef").textContent =
+          report.reference_number;
+        document.getElementById("detailCategory").textContent =
+          catMap[report.category] || report.category;
+        document.getElementById("detailDate").textContent = report.incident_date
+          ? report.incident_date.split("T")[0]
+          : "—";
+        document.getElementById("detailLocation").textContent =
+          report.incident_location || "—";
+        document.getElementById("detailPersons").textContent =
+          report.involved_persons || "—";
+        document.getElementById("detailDescription").textContent =
+          report.description;
+
+        const badge = document.getElementById("detailStatusBadge");
+        badge.textContent = statusMap[report.status] || report.status;
+        badge.className = "status-badge " + (statusClass[report.status] || "");
+
+        document.getElementById("messageInputRow").style.display =
+          report.status === "closed" ? "none" : "flex";
+      }
+
+      async function loadMessages(ref) {
+        try {
+          const res = await api.getMessages(ref);
+          const thread = document.getElementById("messageThread");
+          const messages = res.data.messages;
+
+          if (!messages.length) {
+            thread.innerHTML =
+              '<div class="empty-state">' + T.no_messages + "</div>";
+            return;
+          }
+
+          thread.innerHTML = messages
+            .map((m) => {
+              const isAdmin = m.sender_role === "admin";
+              const time = new Date(m.created_at).toLocaleString(
+                currentLang === "de" ? "de-DE" : "en-GB",
+                {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                },
+              );
+              return (
+                '<div class="message-bubble ' +
+                (isAdmin ? "message-admin" : "message-whistleblower") +
+                '">' +
+                m.body +
+                '<div class="message-time">' +
+                time +
+                "</div>" +
+                "</div>"
+              );
+            })
+            .join("");
+
+          thread.scrollTop = thread.scrollHeight;
+        } catch (e) {
+          console.warn("Load messages failed:", e);
+        }
+      }
+
+      async function loadAttachments(ref) {
+        try {
+          const res = await api.getAttachments(ref);
+          const list = document.getElementById("attachmentList");
+          const attachments = res.data.attachments;
+
+          if (!attachments.length) {
+            list.innerHTML =
+              '<div class="empty-state">' + T.no_attachments + "</div>";
+            return;
+          }
+
+          list.innerHTML = attachments
+            .map((a) => {
+              const size = (a.size / 1024).toFixed(1) + " KB";
+              return (
+                '<div class="attachment-item">' +
+                '<span><i class="fa-solid fa-paperclip"></i> ' +
+                a.original_filename +
+                ' <small style="color:#999">(' +
+                size +
+                ")</small></span>" +
+                "<button onclick=\"downloadFile('" +
+                a.id +
+                "', '" +
+                a.original_filename +
+                "')\">" +
+                '<i class="fa-solid fa-download"></i> ' +
+                T.download +
+                "</button>" +
+                "</div>"
+              );
+            })
+            .join("");
+        } catch (e) {
+          console.warn("Load attachments failed:", e);
+        }
+      }
+
+      async function sendMessage() {
+        const input = document.getElementById("messageInput");
+        const body = input.value.trim();
+        if (!body || !currentReport) return;
+        try {
+          await api.sendMessage(currentReport.reference_number, body);
+          input.value = "";
+          await loadMessages(currentReport.reference_number);
+        } catch (e) {
+          Swal.fire(T.error_title, T.err_generic, "error");
+        }
+      }
+
+      async function downloadFile(id, filename) {
+        try {
+          const res = await api.downloadAttachment(id);
+          const url = window.URL.createObjectURL(new Blob([res.data]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", filename);
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          window.URL.revokeObjectURL(url);
+        } catch (e) {
+          Swal.fire(T.error_title, T.err_generic, "error");
+        }
+      }
+
+      async function uploadAttachment() {
+        const file = document.getElementById("newAttachment").files[0];
+        if (!file || !currentReport) return;
+        try {
+          await api.uploadAttachment(currentReport.reference_number, file);
+          await loadAttachments(currentReport.reference_number);
+        } catch (e) {
+          Swal.fire(T.error_title, T.err_generic, "error");
+        }
+      }
+
+      function openNewReport() {
+        window.location.href = "index.html";
+      }
+
+      async function doLogout() {
+        const result = await Swal.fire({
+          title: T.confirm_logout,
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: T.yes_logout,
+          cancelButtonText: T.cancel,
+          confirmButtonColor: "#1a237e",
+        });
+        if (!result.isConfirmed) return;
+        try {
+          await api.logout();
+        } catch (e) {}
+        api.clearToken();
+        window.location.href = "index.html";
+      }
+
+      applyLang();
+
+      document.getElementById("sidebarEmail").textContent = user
+        ? user.id.substring(0, 8) + "..."
+        : "";
+
+      loadReports();
+    </script>
+  </body>
+</html>
