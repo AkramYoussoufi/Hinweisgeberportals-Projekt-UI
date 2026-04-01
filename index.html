@@ -708,7 +708,7 @@
     <script>
       api.init();
       let currentStep = 1;
-      let currentLang = "de";
+      let currentLang = localStorage.getItem("lang") || "de";
 
       if (api.isLoggedIn()) {
         const user = api.getUser();
@@ -736,6 +736,7 @@
 
       function switchLang() {
         currentLang = currentLang === "de" ? "en" : "de";
+        localStorage.setItem("lang", currentLang);
         const script = document.createElement("script");
         script.src = "js/lang/" + currentLang + ".js";
         script.onload = applyLang;
@@ -980,7 +981,18 @@
         window.location.href = "track.html";
       }
 
-      applyLang();
+      function _initLangAndRun(callback) {
+        if (currentLang !== "de") {
+          const script = document.createElement("script");
+          script.src = "js/lang/" + currentLang + ".js";
+          script.onload = callback;
+          document.head.appendChild(script);
+        } else {
+          callback();
+        }
+      }
+
+      _initLangAndRun(applyLang);
     </script>
   </body>
 </html>
