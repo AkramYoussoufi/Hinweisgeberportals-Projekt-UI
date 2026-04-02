@@ -502,8 +502,6 @@ The application serves three distinct user groups, each with their own interface
 | Alert Dialogs         | SweetAlert2                                            |
 | CAPTCHA               | hCaptcha                                               |
 | Icons                 | Font Awesome 6.5                                       |
-| Build Tool            | Vite 7                                                 |
-| Dev Server            | Vite dev server (HMR)                                  |
 
 ---
 
