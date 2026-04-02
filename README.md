@@ -6,7 +6,7 @@
 
 ## 🇩🇪 Deutsch
 
-Die Frontend-Oberfläche für das **Hinweisgeberportal** — eine sichere, datenschutzorientierte Whistleblower-Meldeplattform. Entwickelt mit **Vanilla JavaScript** und **Tailwind CSS 4**, konzipiert zur Einhaltung des deutschen Hinweisgeberschutzgesetzes (**HinSchG**) und der **DSGVO**.
+Die Frontend-Oberfläche für das **Hinweisgeberportal** — eine sichere, datenschutzorientierte Whistleblower-Meldeplattform. Entwickelt mit **Vanilla JavaScript**, konzipiert zur Einhaltung des deutschen Hinweisgeberschutzgesetzes (**HinSchG**) und der **DSGVO**.
 
 ---
 
@@ -24,7 +24,6 @@ Die Frontend-Oberfläche für das **Hinweisgeberportal** — eine sichere, daten
 - [Sicherheitsmaßnahmen](#sicherheitsmaßnahmen)
 - [Installation & Einrichtung](#installation--einrichtung)
 - [Konfiguration](#konfiguration)
-- [Produktions-Build](#produktions-build)
 
 ---
 
@@ -47,12 +46,12 @@ Die Anwendung bedient drei verschiedene Nutzergruppen, jede mit eigener Oberflä
 | Schicht                | Technologie                                                   |
 | ---------------------- | ------------------------------------------------------------- |
 | Sprache                | Vanilla JavaScript (ES6+)                                     |
-| Gestaltung             | Tailwind CSS 4.0 + benutzerdefiniertes CSS                    |
-| UI-Komponenten (Admin) | Eigene Tailwind-CSS-Komponenten (Tabellen, Modals, Formulare) |
-| HTTP-Client            | Axios 1.11                                                    |
-| Hinweisdialoge         | SweetAlert2                                                   |
-| CAPTCHA                | hCaptcha                                                      |
-| Icons                  | Font Awesome 6.5                                              |
+| UI-Framework           | Webix (CDN)                                                   |
+| Gestaltung             | Benutzerdefiniertes CSS (`css/custom.css`)                    |
+| HTTP-Client            | Axios (CDN)                                                   |
+| Hinweisdialoge         | SweetAlert2 (CDN)                                             |
+| CAPTCHA                | hCaptcha (CDN)                                                |
+| Icons                  | Font Awesome 6.5 (CDN)                                        |
 
 ---
 
@@ -121,7 +120,7 @@ Wird mit `?ref=HIN-YYYY-XXXX` als Abfrageparameter geladen. Zeigt alles zu einer
 
 **Zugang:** Nutzer mit Rolle `admin` oder `superadmin`
 
-Eine vollständige Fallverwaltungsoberfläche mit eigenen Tailwind-CSS-Komponenten:
+Eine vollständige Fallverwaltungsoberfläche, aufgebaut mit Webix-Komponenten:
 
 **Seitenleisten-Navigation**
 
@@ -192,10 +191,8 @@ hinweisgeberporal-ui/
 │   └── lang/
 │       ├── de.js                # Deutsche UI-Zeichenketten (Standard)
 │       └── en.js                # Englische UI-Zeichenketten
-├── css/
-│   └── custom.css               # Globale Komponentenstile
-├── package.json
-└── vite.config.js
+└── css/
+    └── custom.css               # Globale Komponentenstile
 ```
 
 ---
@@ -213,7 +210,7 @@ APP_CONFIG = {
 };
 ```
 
-`API_BASE` vor dem Produktions-Build auf den Produktionsserver ändern.
+`API_BASE` vor dem Produktionseinsatz auf den Produktionsserver ändern.
 
 ---
 
@@ -332,7 +329,7 @@ Die Oberfläche enthält vollständige **Deutsch- (Standard)** und **Englisch-**
 
 **Zeichenketten umfassen:** App-Name, Navigationsbezeichnungen, Hero-Text, Formular-Labels, Schaltflächenbezeichnungen, Kategorienamen, Statusbezeichnungen, Fehlermeldungen, Validierungsmeldungen.
 
-**Sprachewechsel:**
+**Sprachwechsel:**
 
 1. Nutzer klickt auf den Sprachumschalter in der Kopfzeile
 2. Auswahl wird als `lang` in `localStorage` gespeichert
@@ -344,8 +341,8 @@ Die Oberfläche enthält vollständige **Deutsch- (Standard)** und **Englisch-**
 
 #### Ansatz
 
-- **Tailwind CSS 4** für Utility-Klassen überall
-- **`css/custom.css`** für benannte Komponentenstile (Karten, Schaltflächen, Seitenleiste, Formulare, Modals, Admin-Tabellen)
+- **`css/custom.css`** für alle Komponentenstile (Karten, Schaltflächen, Seitenleiste, Formulare, Modals, Admin-Tabellen)
+- Webix-Komponenten für die Admin-Oberfläche
 
 #### Farbpalette
 
@@ -371,14 +368,13 @@ Die Oberfläche enthält vollständige **Deutsch- (Standard)** und **Englisch-**
 ### Sicherheitsmaßnahmen
 
 | Bereich              | Umsetzung                                                                                  |
-| -------------------- | ------------------------------------------------------------------------------------------ | --- | ------------------------------------------------------ |
+| -------------------- | ------------------------------------------------------------------------------------------ |
 | XSS-Prävention       | Text wird über `.textContent` / `.innerText` gesetzt, niemals `.innerHTML` mit Nutzerdaten |
 | Token-Speicherung    | Bearer-Token in localStorage; nur über `Authorization`-Header übertragen                   |
 | Anonyme Zugangsdaten | Token + PIN einmalig in einem Modal angezeigt; Nutzer ist für die Sicherung verantwortlich |
 | Eingabevalidierung   | E-Mail-Format, Passwortbestätigung, MIME-Typ und Dateigröße werden clientseitig geprüft    |
 | CAPTCHA              | hCaptcha-Widget bei anonymer Meldungseinreichung; Token serverseitig verifiziert           |
-| URL-Parameter        | Abfrageparameter vor Verwendung in API-Aufrufen oder DOM-Updates bereinigt                 |
-| Rollendurchsetzung   | Admin-Seiten prüfen `user.role === 'admin'                                                 |     | 'superadmin'` beim Laden und leiten andernfalls weiter |
+| Rollendurchsetzung   | Admin-Seiten prüfen `user.role === 'admin' \| 'superadmin'` beim Laden und leiten andernfalls weiter |
 
 ---
 
@@ -386,25 +382,24 @@ Die Oberfläche enthält vollständige **Deutsch- (Standard)** und **Englisch-**
 
 #### Voraussetzungen
 
-- Node.js 18+
-- npm 9+
+- Einen Webserver (z.B. XAMPP, Apache, Nginx) oder direkt im Browser öffnen
 - Die [Backend-API](../hinweisgeberporal) läuft unter `http://127.0.0.1:8000`
 
 #### Schritte
 
 ```bash
-# 1. Repository klonen
+# 1. Repository klonen oder Dateien herunterladen
 git clone <repo-url>
 cd hinweisgeberporal-ui
 
-# 2. Abhängigkeiten installieren
-npm install
-
-# 3. Entwicklungsserver starten
-npm run dev
+# 2. Dateien über einen Webserver ausliefern
+# Beispiel mit XAMPP: Ordner in htdocs ablegen und über http://localhost/hinweisgeberporal-ui/ aufrufen
+# Oder direkt index.html im Browser öffnen (einige API-Aufrufe erfordern einen echten Server)
 ```
 
-Die App ist unter `http://localhost:5173` verfügbar. Sicherstellen, dass `FRONTEND_URL` in der Backend-`.env` mit dieser Adresse übereinstimmt, damit E-Mail-Links korrekt funktionieren.
+Es ist kein Build-Schritt erforderlich — die Dateien können direkt ausgeliefert werden.
+
+Sicherstellen, dass `FRONTEND_URL` in der Backend-`.env` mit der verwendeten Adresse übereinstimmt, damit E-Mail-Links korrekt funktionieren.
 
 ---
 
@@ -428,18 +423,6 @@ const APP_CONFIG = {
 
 ---
 
-### Produktions-Build
-
-```bash
-npm run build
-```
-
-Vite gibt optimierte, minimierte Assets in das `dist/`-Verzeichnis aus. Den Inhalt von `dist/` auf einem beliebigen statischen Webhost bereitstellen oder aus dem `public/`-Verzeichnis des Backends ausliefern.
-
-Die `FRONTEND_URL`-Umgebungsvariable des Backends auf die Produktionsdomain aktualisieren, damit E-Mail-Verifizierungs- und Passwort-Reset-Links korrekt aufgelöst werden.
-
----
-
 ### Verwandtes
 
 - [Backend-API-Repository](../hinweisgeberporal) — Laravel 12 REST API
@@ -455,7 +438,7 @@ Dieses Projekt ist proprietär. Alle Rechte vorbehalten.
 
 ## 🇬🇧 English
 
-The frontend interface for the **Hinweisgeberportal** — a secure, privacy-first whistleblower reporting platform. Built with **Vanilla JavaScript** and **Tailwind CSS 4**, designed to comply with the German Whistleblower Protection Act (**HinSchG**) and **GDPR (DSGVO)**.
+The frontend interface for the **Hinweisgeberportal** — a secure, privacy-first whistleblower reporting platform. Built with **Vanilla JavaScript**, designed to comply with the German Whistleblower Protection Act (**HinSchG**) and **GDPR (DSGVO)**.
 
 ---
 
@@ -473,7 +456,6 @@ The frontend interface for the **Hinweisgeberportal** — a secure, privacy-firs
 - [Security Practices](#security-practices)
 - [Installation & Setup](#installation--setup)
 - [Configuration](#configuration)
-- [Building for Production](#building-for-production)
 
 ---
 
@@ -496,12 +478,12 @@ The application serves three distinct user groups, each with their own interface
 | Layer                 | Technology                                             |
 | --------------------- | ------------------------------------------------------ |
 | Language              | Vanilla JavaScript (ES6+)                              |
-| Styling               | Tailwind CSS 4.0 + custom CSS                          |
-| UI Components (admin) | Custom Tailwind CSS components (tables, modals, forms) |
-| HTTP Client           | Axios 1.11                                             |
-| Alert Dialogs         | SweetAlert2                                            |
-| CAPTCHA               | hCaptcha                                               |
-| Icons                 | Font Awesome 6.5                                       |
+| UI Framework          | Webix (CDN)                                            |
+| Styling               | Custom CSS (`css/custom.css`)                          |
+| HTTP Client           | Axios (CDN)                                            |
+| Alert Dialogs         | SweetAlert2 (CDN)                                      |
+| CAPTCHA               | hCaptcha (CDN)                                         |
+| Icons                 | Font Awesome 6.5 (CDN)                                 |
 
 ---
 
@@ -570,7 +552,7 @@ Loaded with `?ref=HIN-YYYY-XXXX` as a query parameter. Shows everything about a 
 
 **Access:** Users with role `admin` or `superadmin`
 
-A full case management interface built with custom Tailwind CSS components:
+A full case management interface built with Webix components:
 
 **Sidebar Navigation**
 
@@ -641,10 +623,8 @@ hinweisgeberporal-ui/
 │   └── lang/
 │       ├── de.js                # German UI strings (default)
 │       └── en.js                # English UI strings
-├── css/
-│   └── custom.css               # Global component styles
-├── package.json
-└── vite.config.js
+└── css/
+    └── custom.css               # Global component styles
 ```
 
 ---
@@ -662,7 +642,7 @@ APP_CONFIG = {
 };
 ```
 
-Change `API_BASE` to point to the production server before building.
+Change `API_BASE` to point to the production server before deploying.
 
 ---
 
@@ -793,8 +773,8 @@ The UI ships with full **German (default)** and **English** translations.
 
 #### Approach
 
-- **Tailwind CSS 4** for utility classes throughout
-- **`css/custom.css`** for named component styles (cards, buttons, sidebar, forms, modals, admin tables)
+- **`css/custom.css`** for all component styles (cards, buttons, sidebar, forms, modals, admin tables)
+- Webix components for the admin interface
 
 #### Color Palette
 
@@ -820,14 +800,13 @@ The UI ships with full **German (default)** and **English** translations.
 ### Security Practices
 
 | Concern               | Implementation                                                                                      |
-| --------------------- | --------------------------------------------------------------------------------------------------- | --- | -------------------------------------------- |
+| --------------------- | --------------------------------------------------------------------------------------------------- |
 | XSS prevention        | Text set via `.textContent` / `.innerText`, never `.innerHTML` with user data                       |
 | Token storage         | Bearer token in localStorage; sent via `Authorization` header only                                  |
 | Anonymous credentials | Token + PIN displayed once in a modal; user is responsible for saving them                          |
 | Input validation      | Email format, password confirmation, MIME type, and file size checked client-side before submission |
 | CAPTCHA               | hCaptcha widget on anonymous report submission; token verified server-side                          |
-| URL parameters        | Query params sanitized before use in API calls or DOM updates                                       |
-| Role enforcement      | Admin pages check `user.role === 'admin'                                                            |     | 'superadmin'` on load and redirect otherwise |
+| Role enforcement      | Admin pages check `user.role === 'admin' \| 'superadmin'` on load and redirect otherwise            |
 
 ---
 
@@ -835,25 +814,24 @@ The UI ships with full **German (default)** and **English** translations.
 
 #### Prerequisites
 
-- Node.js 18+
-- npm 9+
+- A web server (e.g. XAMPP, Apache, Nginx) or open files directly in the browser
 - The [backend API](../hinweisgeberporal) running at `http://127.0.0.1:8000`
 
 #### Steps
 
 ```bash
-# 1. Clone the repository
+# 1. Clone the repository or download the files
 git clone <repo-url>
 cd hinweisgeberporal-ui
 
-# 2. Install dependencies
-npm install
-
-# 3. Start the development server
-npm run dev
+# 2. Serve the files from a web server
+# Example with XAMPP: place the folder in htdocs and open http://localhost/hinweisgeberporal-ui/
+# Or open index.html directly in the browser (some API calls require a real server)
 ```
 
-The app will be available at `http://localhost:5173`. Make sure `FRONTEND_URL` in the backend `.env` matches this address for email links to work correctly.
+No build step required — the files can be served as-is.
+
+Make sure `FRONTEND_URL` in the backend `.env` matches the address you're serving from, so email links work correctly.
 
 ---
 
@@ -874,18 +852,6 @@ const APP_CONFIG = {
   APP_NAME: "Hinweisgeberportal",
 };
 ```
-
----
-
-### Building for Production
-
-```bash
-npm run build
-```
-
-Vite outputs optimized, minified assets into the `dist/` directory. Deploy the contents of `dist/` to any static web host or serve it from the backend's `public/` directory.
-
-Ensure the backend's `FRONTEND_URL` environment variable is updated to the production domain so that email verification and password reset links resolve correctly.
 
 ---
 
