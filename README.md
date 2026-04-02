@@ -1,10 +1,438 @@
-# Hinweisgeberportal — Frontend UI
+# Hinweisgeberportal — Frontend-Oberfläche / Frontend UI
 
-The frontend interface for the **Hinweisgeberportal** — a secure, privacy-first whistleblower reporting platform. Built with **Vanilla JavaScript**, **Tailwind CSS 4**, and **Webix UI**, designed to comply with the German Whistleblower Protection Act (**HinSchG**) and **GDPR (DSGVO)**.
+[🇩🇪 Deutsch](#-deutsch) | [🇬🇧 English](#-english)
 
 ---
 
-## Table of Contents
+## 🇩🇪 Deutsch
+
+Die Frontend-Oberfläche für das **Hinweisgeberportal** — eine sichere, datenschutzorientierte Whistleblower-Meldeplattform. Entwickelt mit **Vanilla JavaScript** und **Tailwind CSS 4**, konzipiert zur Einhaltung des deutschen Hinweisgeberschutzgesetzes (**HinSchG**) und der **DSGVO**.
+
+---
+
+### Inhaltsverzeichnis
+
+- [Übersicht](#übersicht)
+- [Technologie-Stack](#technologie-stack)
+- [Seiten & Routen](#seiten--routen)
+- [Projektstruktur](#projektstruktur)
+- [JavaScript-Architektur](#javascript-architektur)
+- [API-Kommunikation](#api-kommunikation)
+- [Authentifizierungsablauf](#authentifizierungsablauf)
+- [Sprachunterstützung](#sprachunterstützung)
+- [Gestaltung & Design](#gestaltung--design)
+- [Sicherheitsmaßnahmen](#sicherheitsmaßnahmen)
+- [Installation & Einrichtung](#installation--einrichtung)
+- [Konfiguration](#konfiguration)
+- [Produktions-Build](#produktions-build)
+
+---
+
+### Übersicht
+
+Dies ist eine **Multi-Page Application (MPA)** — jede Seite ist eine eigenständige HTML-Datei mit eigenem JavaScript. Es gibt kein SPA-Framework oder clientseitigen Router. Die Oberfläche kommuniziert ausschließlich mit der [Hinweisgeberportal-Backend-API](../hinweisgeberporal).
+
+Die Anwendung bedient drei verschiedene Nutzergruppen, jede mit eigener Oberfläche:
+
+| Nutzer | Oberfläche |
+|---|---|
+| **Hinweisgeber** (anonym oder registriert) | `index.html`, `dashboard.html`, `track.html` |
+| **Administrator** | `admin/index.html` |
+| **SuperAdministrator** | `admin/index.html` (mit zusätzlichen Tabs) |
+
+---
+
+### Technologie-Stack
+
+| Schicht | Technologie |
+|---|---|
+| Sprache | Vanilla JavaScript (ES6+) |
+| Gestaltung | Tailwind CSS 4.0 + benutzerdefiniertes CSS |
+| UI-Komponenten (Admin) | Eigene Tailwind-CSS-Komponenten (Tabellen, Modals, Formulare) |
+| HTTP-Client | Axios 1.11 |
+| Hinweisdialoge | SweetAlert2 |
+| CAPTCHA | hCaptcha |
+| Icons | Font Awesome 6.5 |
+| Build-Tool | Vite 7 |
+| Entwicklungsserver | Vite Dev Server (HMR) |
+
+---
+
+### Seiten & Routen
+
+#### `index.html` — Startseite
+**Zugang:** Öffentlich (kein Login erforderlich)
+
+Der Haupteinstiegspunkt für Hinweisgeber. Enthält:
+- Hero-Bereich mit zwei primären Aktionen: **Meldung einreichen** und **Meldung verfolgen**
+- Übersichtskarten (anonym, sicher, gesetzeskonform, Kommunikation)
+- Eingebettete **Login**- und **Registrierungs**-Modals (keine separaten Seiten)
+- **Mehrstufiger Meldeassistent:**
+  - Schritt 1: Anonym oder registriert wählen
+  - Schritt 2: Meldungsdetails ausfüllen (Kategorie, Betreff, Beschreibung, optional: Datum, Ort, beteiligte Personen)
+  - Schritt 3: hCaptcha-Verifizierung (anonymer Pfad)
+  - Bei Erfolg: Anzeige der Referenznummer und, für anonyme Nutzer, des einmaligen Tokens + der PIN
+- Sprachumschalter (Deutsch / Englisch)
+
+---
+
+#### `dashboard.html` — Hinweisgeber-Dashboard
+**Zugang:** Authentifizierte Nutzer (registriert oder anonym mit Token+PIN)
+
+Zeigt alle Meldungen des eingeloggten Nutzers:
+- Zwei-Spalten-Layout: Seitenleiste + Meldungsliste
+- Jede Meldung als Karte: Referenznummer, Kategorie, Status-Badge, Betreff, Einreichungsdatum
+- Klick auf eine Meldung navigiert zu `track.html?ref=HIN-YYYY-XXXX`
+- Abmelde-Schaltfläche in der Seitenleiste
+
+---
+
+#### `track.html` — Meldungsdetail & Kommunikation
+**Zugang:** Authentifizierter Meldungsinhaber
+
+Wird mit `?ref=HIN-YYYY-XXXX` als Abfrageparameter geladen. Zeigt alles zu einer einzelnen Meldung, in **drei Tabs**:
+
+**Tab Details**
+- Referenznummer, Status, Kategorie
+- Betreff, vollständige Beschreibung
+- Vorfallsdatum, -ort, beteiligte Personen (falls angegeben)
+
+**Tab Nachrichten**
+- Thread-Konversation zwischen Hinweisgeber und Administrator
+- Nachrichteneingabe am unteren Rand
+- Scrollt automatisch zur letzten Nachricht
+- Zeigt Gelesen/Ungelesen-Zeitstempel
+- Eingabe deaktiviert und ausgeblendet bei geschlossener Meldung
+
+**Tab Anhänge**
+- Liste aller hochgeladenen Dateien mit Name, Größe und Download-Schaltfläche
+- Datei-Upload-Formular mit clientseitiger Validierung (MIME-Typ + Dateigröße)
+- Upload deaktiviert bei geschlossener Meldung
+
+---
+
+#### `admin/index.html` — Administrationskonsole
+**Zugang:** Nutzer mit Rolle `admin` oder `superadmin`
+
+Eine vollständige Fallverwaltungsoberfläche mit eigenen Tailwind-CSS-Komponenten:
+
+**Seitenleisten-Navigation**
+- Dashboard (Zusammenfassung)
+- Meldungen (alle Einreichungen)
+- Administratoren — *nur SuperAdmin*
+- Einstellungen — *nur SuperAdmin*
+- Abmelden
+
+**Meldungsansicht**
+- Filterleiste: Status-Dropdown, Kategorie-Dropdown, Freitextsuche
+- Meldungstabelle: Referenznummer, Betreff, Kategorie, Status, Einreichungsdatum, Aktionen
+- Statusaktualisierung: von `eingegangen` → `in Bearbeitung` → `Klärungsbedarf` → `abgeschlossen`
+- Klick auf eine Zeile öffnet vollständiges Meldungsdetail: Beschreibung, Vorfallsinfo, Nachrichtenthread, Anhänge
+
+**Administratorenansicht** *(nur SuperAdmin)*
+- Tabelle aller Admin-Konten mit Rolle, Erstellungsdatum und Status
+- Aktionen: Deaktivieren, Reaktivieren, Passwort ändern, Löschen
+- Formular zum Anlegen neuer Administratoren
+- Identitätsentschlüsselungs-Schaltfläche für einzelne Meldungen (erstellt Audit-Log-Eintrag)
+
+**Einstellungsansicht** *(nur SuperAdmin)*
+- Bearbeitbare Felder: max. Meldungen pro Stunde pro IP, max. Dateigröße (MB), max. wöchentliches Upload-Kontingent (MB)
+- Änderungen werden im Backend gespeichert und gelten sofort
+
+---
+
+#### `reset-password.html` — Passwort zurücksetzen
+**Zugang:** Öffentlich
+
+Liest `?token=...&email=...` aus der URL (vom Backend in der Reset-E-Mail gesetzt).
+- Formular für neues Passwort + Bestätigung
+- Sendet an die API; zeigt Erfolgsbestätigung nach Abschluss
+
+---
+
+#### `verify-email.html` — E-Mail-Verifizierungsergebnis
+**Zugang:** Öffentlich
+
+Liest `?status=success|error|already` aus der URL.
+- **success** — E-Mail verifiziert; Link zum Login
+- **error** — Ungültiger oder abgelaufener Link; Link zurück zum Portal
+- **already** — E-Mail war bereits verifiziert
+
+---
+
+### Projektstruktur
+
+```
+hinweisgeberporal-ui/
+├── index.html                   # Startseite + Meldeassistent
+├── dashboard.html               # Hinweisgeber-Meldungsliste
+├── track.html                   # Meldungsdetail, Nachrichten, Anhänge
+├── reset-password.html          # Passwort-Reset-Formular
+├── verify-email.html            # E-Mail-Verifizierungsergebnis
+├── admin/
+│   └── index.html               # Administrator- und SuperAdmin-Konsole
+├── js/
+│   ├── config.js                # API-Basis-URL und App-Konstanten
+│   ├── api.js                   # Axios-Instanz, Interceptoren, alle API-Methoden
+│   └── lang/
+│       ├── de.js                # Deutsche UI-Zeichenketten (Standard)
+│       └── en.js                # Englische UI-Zeichenketten
+├── css/
+│   └── custom.css               # Globale Komponentenstile
+├── package.json
+└── vite.config.js
+```
+
+---
+
+### JavaScript-Architektur
+
+#### `js/config.js`
+Exportiert ein einzelnes `APP_CONFIG`-Objekt:
+
+```js
+APP_CONFIG = {
+  API_BASE: "http://127.0.0.1:8000/api",
+  APP_NAME: "Hinweisgeberportal"
+}
+```
+
+`API_BASE` vor dem Produktions-Build auf den Produktionsserver ändern.
+
+---
+
+#### `js/api.js`
+Das zentrale API-Modul. Exportiert alle API-Aufruf-Funktionen und Auth-Hilfsprogramme.
+
+**Axios-Instanz:**
+- Basis-URL aus `APP_CONFIG.API_BASE`
+- Standard-Header: `Accept: application/json`, `Content-Type: application/json`
+- **Anfrage-Interceptor:** fügt `Authorization: Bearer {token}` aus localStorage ein; zeigt globalen Lade-Spinner
+- **Antwort-Interceptor:** blendet Spinner aus; leitet Fehler für seitenspezifische Behandlung weiter
+
+**Auth-Hilfsprogramme:**
+
+| Funktion | Zweck |
+|---|---|
+| `setToken(token)` | Token in localStorage speichern und als Axios-Standard-Header setzen |
+| `clearToken()` | Token aus localStorage und Axios-Headern entfernen |
+| `setUser(user)` | Nutzerobjekt (`{ id, role, is_anonymous }`) in localStorage speichern |
+| `getUser()` | Nutzerobjekt aus localStorage abrufen |
+| `isLoggedIn()` | Gibt `true` zurück, wenn ein Token in localStorage vorhanden ist |
+
+**Alle API-Methoden** (nach Funktion gruppiert):
+
+| Gruppe | Funktionen |
+|---|---|
+| Auth | `register`, `login`, `anonymousLogin`, `logout`, `forgotPassword`, `resetPassword`, `me` |
+| Meldungen | `submitReport`, `getReports`, `getReport` |
+| Nachrichten | `getMessages`, `sendMessage` |
+| Anhänge | `getAttachments`, `uploadAttachment`, `downloadAttachment` |
+| Admin | `adminGetReports`, `adminGetReport`, `adminUpdateStatus`, `adminGetMessages`, `adminSendMessage`, `adminGetAttachments` |
+| SuperAdmin | `superadminListAdmins`, `superadminCreateAdmin`, `superadminDeactivateAdmin`, `superadminReactivateAdmin`, `superadminDeleteAdmin`, `superadminChangeAdminPassword`, `superadminUnlockIdentity`, `superadminGetSettings`, `superadminUpdateSettings` |
+
+---
+
+#### Zustandsverwaltung
+
+Es gibt keine globale Zustandsbibliothek. Der Zustand wird mit zwei Mechanismen verwaltet:
+
+1. **`localStorage`** — seitenübergreifend persistent:
+   - `token` — Sanctum Bearer-Token
+   - `user` — JSON-Objekt `{ id, role, is_anonymous }`
+   - `lang` — aktuelle Sprachauswahl (`de` oder `en`)
+
+2. **In-Memory-Variablen** — lokal für jede Seite:
+   - Aktuelle Meldungsdaten
+   - Nachrichtenliste
+   - Anhangsliste
+   - Aktive Filterauswahl
+
+Das DOM wird direkt aktualisiert — kein virtuelles DOM, keine Reaktivitätsschicht.
+
+---
+
+### API-Kommunikation
+
+Alle Anfragen laufen über die Axios-Instanz in `api.js`.
+
+#### Datei-Upload
+```js
+// FormData wird für multipart/form-data verwendet
+uploadAttachment(referenceNumber, file)
+// Content-Type: multipart/form-data (automatisch von Axios gesetzt)
+```
+
+#### Datei-Download
+```js
+// responseType: 'blob' für Binärdaten
+downloadAttachment(attachmentId)
+// Frontend erstellt Blob-URL → löst <a>-Klick aus → Download startet
+```
+
+#### Fehlerbehandlung
+Seitenspezifischer Code fängt Axios-Fehler ab und zeigt Rückmeldungen über **SweetAlert2**. Behandelte HTTP-Status-Codes:
+
+| Status | Bedeutung | UI-Reaktion |
+|---|---|---|
+| `401` | Nicht authentifiziert | Weiterleitung zum Login |
+| `403` | Zugriff verweigert | Zugriff-verweigert-Meldung |
+| `422` | Validierungsfehler | Feldspezifische Fehlermeldungen |
+| `429` | Rate-Limit erreicht | Meldung "Zu viele Anfragen" |
+
+---
+
+### Authentifizierungsablauf
+
+#### Registrierter Nutzer
+1. Registrierungsmodal auf `index.html` öffnen → `POST /auth/register`
+2. E-Mail auf Verifizierungslink prüfen → klicken zum Verifizieren
+3. Login-Modal öffnen → `POST /auth/login` → Token in localStorage gespeichert
+4. Alle Seiten prüfen `isLoggedIn()` beim Laden; Weiterleitung zu `index.html` bei negativem Ergebnis
+
+#### Anonymer Nutzer
+1. Meldeassistenten ohne Einloggen starten
+2. Formular + hCaptcha ausfüllen → `POST /reports`
+3. **Einmalige Anzeige:** Token (UUID) und PIN (6 Stellen) in einem Modal — Nutzer muss diese speichern
+4. Später: `index.html` → „Meldung verfolgen" → Token + PIN eingeben → `POST /auth/anonymous-login` → Token in localStorage
+
+---
+
+### Sprachunterstützung
+
+Die Oberfläche enthält vollständige **Deutsch- (Standard)** und **Englisch-**Übersetzungen.
+
+**Dateien:**
+- `js/lang/de.js` — exportiert `LANG`-Objekt mit allen deutschen Zeichenketten (Standard)
+- `js/lang/en.js` — exportiert `LANG`-Objekt mit allen englischen Zeichenketten
+
+**Zeichenketten umfassen:** App-Name, Navigationsbezeichnungen, Hero-Text, Formular-Labels, Schaltflächenbezeichnungen, Kategorienamen, Statusbezeichnungen, Fehlermeldungen, Validierungsmeldungen.
+
+**Sprachewechsel:**
+1. Nutzer klickt auf den Sprachumschalter in der Kopfzeile
+2. Auswahl wird als `lang` in `localStorage` gespeichert
+3. `LANG`-Objekt wird ausgetauscht; der gesamte Seitentext wird aktualisiert
+
+---
+
+### Gestaltung & Design
+
+#### Ansatz
+- **Tailwind CSS 4** für Utility-Klassen überall
+- **`css/custom.css`** für benannte Komponentenstile (Karten, Schaltflächen, Seitenleiste, Formulare, Modals, Admin-Tabellen)
+
+#### Farbpalette
+
+| Rolle | Wert |
+|---|---|
+| Primär | `#1a237e` (dunkles Indigo) |
+| Primär hell | `#e8eaf6` (helles Indigo) |
+| Fließtext | `#333333` |
+| Gedämpfter Text | `#555555`, `#999999` |
+| Rahmenlinien | `#dddddd`, `#e0e0e0` |
+| Hintergrund | `#f8f9fa` |
+
+#### Responsive Breakpoints
+
+| Breakpoint | Breite |
+|---|---|
+| Mobil | < 600px |
+| Tablet | 600px – 1024px |
+| Desktop | > 1024px |
+
+---
+
+### Sicherheitsmaßnahmen
+
+| Bereich | Umsetzung |
+|---|---|
+| XSS-Prävention | Text wird über `.textContent` / `.innerText` gesetzt, niemals `.innerHTML` mit Nutzerdaten |
+| Token-Speicherung | Bearer-Token in localStorage; nur über `Authorization`-Header übertragen |
+| Anonyme Zugangsdaten | Token + PIN einmalig in einem Modal angezeigt; Nutzer ist für die Sicherung verantwortlich |
+| Eingabevalidierung | E-Mail-Format, Passwortbestätigung, MIME-Typ und Dateigröße werden clientseitig geprüft |
+| CAPTCHA | hCaptcha-Widget bei anonymer Meldungseinreichung; Token serverseitig verifiziert |
+| URL-Parameter | Abfrageparameter vor Verwendung in API-Aufrufen oder DOM-Updates bereinigt |
+| Rollendurchsetzung | Admin-Seiten prüfen `user.role === 'admin' || 'superadmin'` beim Laden und leiten andernfalls weiter |
+
+---
+
+### Installation & Einrichtung
+
+#### Voraussetzungen
+- Node.js 18+
+- npm 9+
+- Die [Backend-API](../hinweisgeberporal) läuft unter `http://127.0.0.1:8000`
+
+#### Schritte
+
+```bash
+# 1. Repository klonen
+git clone <repo-url>
+cd hinweisgeberporal-ui
+
+# 2. Abhängigkeiten installieren
+npm install
+
+# 3. Entwicklungsserver starten
+npm run dev
+```
+
+Die App ist unter `http://localhost:5173` verfügbar. Sicherstellen, dass `FRONTEND_URL` in der Backend-`.env` mit dieser Adresse übereinstimmt, damit E-Mail-Links korrekt funktionieren.
+
+---
+
+### Konfiguration
+
+`js/config.js` bearbeiten, um auf das richtige Backend zu zeigen:
+
+```js
+// Entwicklung
+const APP_CONFIG = {
+  API_BASE: "http://127.0.0.1:8000/api",
+  APP_NAME: "Hinweisgeberportal"
+};
+
+// Produktion — durch tatsächliche Server-URL ersetzen
+const APP_CONFIG = {
+  API_BASE: "https://api.ihredomain.de/api",
+  APP_NAME: "Hinweisgeberportal"
+};
+```
+
+---
+
+### Produktions-Build
+
+```bash
+npm run build
+```
+
+Vite gibt optimierte, minimierte Assets in das `dist/`-Verzeichnis aus. Den Inhalt von `dist/` auf einem beliebigen statischen Webhost bereitstellen oder aus dem `public/`-Verzeichnis des Backends ausliefern.
+
+Die `FRONTEND_URL`-Umgebungsvariable des Backends auf die Produktionsdomain aktualisieren, damit E-Mail-Verifizierungs- und Passwort-Reset-Links korrekt aufgelöst werden.
+
+---
+
+### Verwandtes
+
+- [Backend-API-Repository](../hinweisgeberporal) — Laravel 12 REST API
+- API-Basis-URL konfiguriert in `js/config.js`
+
+---
+
+### Lizenz
+
+Dieses Projekt ist proprietär. Alle Rechte vorbehalten.
+
+---
+
+## 🇬🇧 English
+
+The frontend interface for the **Hinweisgeberportal** — a secure, privacy-first whistleblower reporting platform. Built with **Vanilla JavaScript** and **Tailwind CSS 4**, designed to comply with the German Whistleblower Protection Act (**HinSchG**) and **GDPR (DSGVO)**.
+
+---
+
+### Table of Contents
 
 - [Overview](#overview)
 - [Tech Stack](#tech-stack)
@@ -22,7 +450,7 @@ The frontend interface for the **Hinweisgeberportal** — a secure, privacy-firs
 
 ---
 
-## Overview
+### Overview
 
 This is a **Multi-Page Application (MPA)** — each page is a standalone HTML file with its own JavaScript. There is no SPA framework or client-side router. The UI communicates exclusively with the [Hinweisgeberportal Backend API](../hinweisgeberporal).
 
@@ -36,13 +464,13 @@ The application serves three distinct user groups, each with their own interface
 
 ---
 
-## Tech Stack
+### Tech Stack
 
 | Layer | Technology |
 |---|---|
 | Language | Vanilla JavaScript (ES6+) |
 | Styling | Tailwind CSS 4.0 + custom CSS |
-| UI Components (admin) | Webix UI (data grids, forms, layouts) |
+| UI Components (admin) | Custom Tailwind CSS components (tables, modals, forms) |
 | HTTP Client | Axios 1.11 |
 | Alert Dialogs | SweetAlert2 |
 | CAPTCHA | hCaptcha |
@@ -52,13 +480,13 @@ The application serves three distinct user groups, each with their own interface
 
 ---
 
-## Pages & Routes
+### Pages & Routes
 
-### `index.html` — Landing Page
+#### `index.html` — Landing Page
 **Access:** Public (no login required)
 
 The main entry point for whistleblowers. Contains:
-- Hero section with value proposition and two primary CTAs: **Submit a Report** and **Track a Report**
+- Hero section with two primary CTAs: **Submit a Report** and **Track a Report**
 - Feature overview cards (anonymous, secure, legal compliance, communication)
 - Inline **Login** and **Register** modals (no separate page)
 - **Multi-step report submission wizard** with:
@@ -70,7 +498,7 @@ The main entry point for whistleblowers. Contains:
 
 ---
 
-### `dashboard.html` — Whistleblower Dashboard
+#### `dashboard.html` — Whistleblower Dashboard
 **Access:** Authenticated users (registered or anonymous with token+PIN)
 
 Displays all reports submitted by the logged-in user:
@@ -81,7 +509,7 @@ Displays all reports submitted by the logged-in user:
 
 ---
 
-### `track.html` — Report Detail & Communication
+#### `track.html` — Report Detail & Communication
 **Access:** Authenticated report owner
 
 Loaded with `?ref=HIN-YYYY-XXXX` as a query parameter. Shows everything about a single report, organized into **three tabs**:
@@ -105,10 +533,10 @@ Loaded with `?ref=HIN-YYYY-XXXX` as a query parameter. Shows everything about a 
 
 ---
 
-### `admin/index.html` — Admin Console
+#### `admin/index.html` — Admin Console
 **Access:** Users with role `admin` or `superadmin`
 
-A full case management interface powered by **Webix UI**:
+A full case management interface built with custom Tailwind CSS components:
 
 **Sidebar Navigation**
 - Dashboard (summary stats)
@@ -119,7 +547,7 @@ A full case management interface powered by **Webix UI**:
 
 **Reports View**
 - Filter bar: status dropdown, category dropdown, free-text search
-- Webix data grid: reference number, subject, category, status, submission date, actions
+- Reports table: reference number, subject, category, status, submission date, actions
 - Inline status update: change from `received` → `reviewing` → `clarification` → `closed`
 - Click a row to open full report detail: description, incident info, message thread, attachments
 
@@ -135,7 +563,7 @@ A full case management interface powered by **Webix UI**:
 
 ---
 
-### `reset-password.html` — Password Reset
+#### `reset-password.html` — Password Reset
 **Access:** Public
 
 Reads `?token=...&email=...` from the URL (set by the backend in the reset email).
@@ -144,17 +572,17 @@ Reads `?token=...&email=...` from the URL (set by the backend in the reset email
 
 ---
 
-### `verify-email.html` — Email Verification Result
+#### `verify-email.html` — Email Verification Result
 **Access:** Public
 
-Reads `?status=success|error|already` from the URL (set by the backend after processing the verification link).
+Reads `?status=success|error|already` from the URL.
 - **success** — Email verified; link to login
 - **error** — Invalid or expired link; link back to portal
 - **already** — Email was already verified
 
 ---
 
-## Project Structure
+### Project Structure
 
 ```
 hinweisgeberporal-ui/
@@ -179,14 +607,14 @@ hinweisgeberporal-ui/
 
 ---
 
-## JavaScript Architecture
+### JavaScript Architecture
 
-### `js/config.js`
+#### `js/config.js`
 Exports a single `APP_CONFIG` object:
 
 ```js
 APP_CONFIG = {
-  API_BASE: "http://127.0.0.1:8000/api",   // Backend API URL
+  API_BASE: "http://127.0.0.1:8000/api",
   APP_NAME: "Hinweisgeberportal"
 }
 ```
@@ -195,7 +623,7 @@ Change `API_BASE` to point to the production server before building.
 
 ---
 
-### `js/api.js`
+#### `js/api.js`
 The central API module. Exports all API call functions and auth utilities used by every page.
 
 **Axios instance:**
@@ -227,7 +655,7 @@ The central API module. Exports all API call functions and auth utilities used b
 
 ---
 
-### State Management
+#### State Management
 
 There is no global state library. State is managed with two mechanisms:
 
@@ -246,25 +674,25 @@ The DOM is updated directly — no virtual DOM, no reactivity layer.
 
 ---
 
-## API Communication
+### API Communication
 
 All requests go through the Axios instance in `api.js`.
 
-### File Upload
+#### File Upload
 ```js
 // FormData is used for multipart/form-data
 uploadAttachment(referenceNumber, file)
 // Content-Type: multipart/form-data (set automatically by Axios)
 ```
 
-### File Download
+#### File Download
 ```js
 // responseType: 'blob' for binary data
 downloadAttachment(attachmentId)
 // Frontend creates a Blob URL → triggers <a> click → download starts
 ```
 
-### Error Handling
+#### Error Handling
 Page-level code catches Axios rejections and displays feedback via **SweetAlert2**. Common HTTP status codes handled:
 
 | Status | Meaning | UI Response |
@@ -276,15 +704,15 @@ Page-level code catches Axios rejections and displays feedback via **SweetAlert2
 
 ---
 
-## Authentication Flow
+### Authentication Flow
 
-### Registered User
+#### Registered User
 1. Open registration modal on `index.html` → `POST /auth/register`
 2. Check email for verification link → click to verify
 3. Open login modal → `POST /auth/login` → token stored in localStorage
 4. All pages check `isLoggedIn()` on load; redirect to `index.html` if false
 
-### Anonymous User
+#### Anonymous User
 1. Start report submission wizard without logging in
 2. Complete form + hCaptcha → `POST /reports`
 3. **One-time display:** token (UUID) and PIN (6 digits) shown in a modal — user must save these
@@ -292,12 +720,12 @@ Page-level code catches Axios rejections and displays feedback via **SweetAlert2
 
 ---
 
-## Language Support
+### Language Support
 
 The UI ships with full **German (default)** and **English** translations.
 
 **Files:**
-- `js/lang/de.js` — exports `LANG` object with all German strings
+- `js/lang/de.js` — exports `LANG` object with all German strings (default)
 - `js/lang/en.js` — exports `LANG` object with all English strings
 
 **Strings include:** app name, nav labels, hero text, form labels, button labels, category names, status names, error messages, validation messages.
@@ -309,14 +737,13 @@ The UI ships with full **German (default)** and **English** translations.
 
 ---
 
-## Styling & Design
+### Styling & Design
 
-### Approach
+#### Approach
 - **Tailwind CSS 4** for utility classes throughout
-- **`css/custom.css`** for named component styles (cards, buttons, sidebar, forms, modals)
-- **Webix UI** handles the admin panel layout and complex components (data grids, dialogs)
+- **`css/custom.css`** for named component styles (cards, buttons, sidebar, forms, modals, admin tables)
 
-### Color Palette
+#### Color Palette
 
 | Role | Value |
 |---|---|
@@ -327,7 +754,7 @@ The UI ships with full **German (default)** and **English** translations.
 | Borders | `#dddddd`, `#e0e0e0` |
 | Background | `#f8f9fa` |
 
-### Responsive Breakpoints
+#### Responsive Breakpoints
 
 | Breakpoint | Width |
 |---|---|
@@ -337,7 +764,7 @@ The UI ships with full **German (default)** and **English** translations.
 
 ---
 
-## Security Practices
+### Security Practices
 
 | Concern | Implementation |
 |---|---|
@@ -351,14 +778,14 @@ The UI ships with full **German (default)** and **English** translations.
 
 ---
 
-## Installation & Setup
+### Installation & Setup
 
-### Prerequisites
+#### Prerequisites
 - Node.js 18+
 - npm 9+
 - The [backend API](../hinweisgeberporal) running at `http://127.0.0.1:8000`
 
-### Steps
+#### Steps
 
 ```bash
 # 1. Clone the repository
@@ -372,11 +799,11 @@ npm install
 npm run dev
 ```
 
-The app will be available at `http://localhost:5173` (or the port Vite assigns). Make sure `FRONTEND_URL` in the backend `.env` matches this address for email links to work correctly.
+The app will be available at `http://localhost:5173`. Make sure `FRONTEND_URL` in the backend `.env` matches this address for email links to work correctly.
 
 ---
 
-## Configuration
+### Configuration
 
 Edit `js/config.js` to point to the correct backend:
 
@@ -396,7 +823,7 @@ const APP_CONFIG = {
 
 ---
 
-## Building for Production
+### Building for Production
 
 ```bash
 npm run build
@@ -408,13 +835,13 @@ Ensure the backend's `FRONTEND_URL` environment variable is updated to the produ
 
 ---
 
-## Related
+### Related
 
 - [Backend API Repository](../hinweisgeberporal) — Laravel 12 REST API
 - API Base URL configured in `js/config.js`
 
 ---
 
-## License
+### License
 
 This project is proprietary. All rights reserved.
