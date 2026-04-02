@@ -947,7 +947,8 @@
           const file = document.getElementById("attachmentFile").files[0];
           if (file) {
             try {
-              await api.uploadAttachment(res.data.reference_number, file);
+              const anonToken = res.data.anonymous_access?.auth_token || null;
+              await api.uploadAttachment(res.data.reference_number, file, anonToken);
             } catch (e) {
               console.warn("Attachment upload failed:", e);
             }
