@@ -1,3 +1,23 @@
+// --- Global spinner ---
+(function () {
+  const el = document.createElement("div");
+  el.id = "global-spinner";
+  el.innerHTML = '<div class="spinner-ring"></div>';
+  document.addEventListener("DOMContentLoaded", () =>
+    document.body.appendChild(el)
+  );
+
+  let _pending = 0;
+  window._spinnerShow = function () {
+    _pending++;
+    el.classList.add("active");
+  };
+  window._spinnerHide = function () {
+    _pending = Math.max(0, _pending - 1);
+    if (_pending === 0) el.classList.remove("active");
+  };
+})();
+
 const api = {
   _token: null,
 
@@ -9,6 +29,16 @@ const api = {
     if (this._token) {
       axios.defaults.headers.common["Authorization"] = "Bearer " + this._token;
     }
+
+    // Show spinner on every request, hide on response/error
+    axios.interceptors.request.use((config) => {
+      window._spinnerShow();
+      return config;
+    });
+    axios.interceptors.response.use(
+      (response) => { window._spinnerHide(); return response; },
+      (error) => { window._spinnerHide(); return Promise.reject(error); }
+    );
   },
 
   setToken(token) {

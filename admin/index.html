@@ -826,6 +826,7 @@
       let currentLang = localStorage.getItem("lang") || "de";
       let currentReport = null;
       let allReports = [];
+      let allAdmins = [];
 
       const L = {
         de: {
@@ -1061,6 +1062,7 @@
         applyLang();
         renderTable(allReports);
         if (currentReport) renderPanel(currentReport);
+        if (allAdmins.length) renderAdmins(allAdmins);
       }
 
       function showView(view, el) {
@@ -1423,7 +1425,8 @@
       async function loadAdmins() {
         try {
           const res = await api.superadminListAdmins();
-          renderAdmins(res.data.admins);
+          allAdmins = res.data.admins;
+          renderAdmins(allAdmins);
         } catch (e) {
           Swal.fire(T.error_title, T.err_generic, "error");
         }

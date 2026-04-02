@@ -246,3 +246,51 @@ body {
     font-size: 15px;
   }
 }
+
+/* Global loading spinner */
+#global-spinner {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: rgba(0, 0, 0, 0.35);
+  align-items: center;
+  justify-content: center;
+}
+
+#global-spinner.active {
+  display: flex;
+}
+
+.spinner-ring {
+  width: 52px;
+  height: 52px;
+  border: 5px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Button loading state */
+.btn-loading {
+  position: relative;
+  pointer-events: none;
+  opacity: 0.75;
+}
+
+.btn-loading::after {
+  content: "";
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  margin-left: 8px;
+  vertical-align: middle;
+}
