@@ -135,17 +135,15 @@ const api = {
     return axios.get("/reports/" + referenceNumber + "/attachments");
   },
 
-  async uploadAttachment(referenceNumber, file, authToken = null) {
+  async uploadAttachment(referenceNumber, file) {
     const formData = new FormData();
     formData.append("file", file);
-    const config = {};
-    if (authToken) {
-      config.headers = { "Authorization": "Bearer " + authToken };
-    }
     return axios.post(
       "/reports/" + referenceNumber + "/attachments",
       formData,
-      config,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      },
     );
   },
 
