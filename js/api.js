@@ -151,4 +151,33 @@ const api = {
   async adminGetAttachments(referenceNumber) {
     return axios.get("/admin/reports/" + referenceNumber + "/attachments");
   },
+
+  // SuperAdmin
+  async superadminListAdmins() {
+    return axios.get("/superadmin/admins");
+  },
+
+  async superadminCreateAdmin(email, password, role) {
+    return axios.post("/superadmin/admins", { email, password, password_confirmation: password, role });
+  },
+
+  async superadminDeactivateAdmin(adminId) {
+    return axios.patch("/superadmin/admins/" + adminId + "/deactivate");
+  },
+
+  async superadminReactivateAdmin(adminId) {
+    return axios.patch("/superadmin/admins/" + adminId + "/reactivate");
+  },
+
+  async superadminDeleteAdmin(adminId) {
+    return axios.delete("/superadmin/admins/" + adminId);
+  },
+
+  async superadminChangeAdminPassword(adminId, password) {
+    return axios.patch("/superadmin/admins/" + adminId + "/password", { password });
+  },
+
+  async superadminUnlockIdentity(referenceNumber) {
+    return axios.get("/superadmin/reports/" + referenceNumber + "/unlock-identity");
+  },
 };
