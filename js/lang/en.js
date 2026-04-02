@@ -97,6 +97,10 @@ var LANG = {
   err_generic: "An error occurred. Please try again.",
   err_login_failed: "Login failed.",
   err_register_failed: "Registration failed.",
+  err_email_not_verified: "Please verify your email address before logging in.",
+  err_captcha_required: "Please complete the CAPTCHA.",
+  success_registered_title: "Registration Successful",
+  success_registered_text: "Please check your inbox and click the verification link to activate your account.",
   success_email_sent: "Email Sent",
   success_email_sent_text:
     "If this email exists in our system you will receive a reset link shortly.",

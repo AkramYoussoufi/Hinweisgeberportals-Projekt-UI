@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdn.webix.com/edge/webix.css" />
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
@@ -510,6 +511,9 @@
               <span id="summarySubject"></span>
             </p>
           </div>
+          <div id="hcaptchaContainer" style="margin-bottom: 16px; display: none">
+            <div class="h-captcha" data-sitekey="3ab6365e-50b4-4dc6-b1f2-495cb9ce87b8"></div>
+          </div>
           <div class="form-actions" style="flex-direction: column; gap: 12px">
             <button
               class="btn btn-blue"
@@ -790,7 +794,10 @@
             window.location.href = "dashboard.html";
           else window.location.href = "admin/index.html";
         } catch (err) {
-          const msg = err.response?.data?.message || LANG.err_login_failed;
+          const status = err.response?.status;
+          const msg = status === 403
+            ? LANG.err_email_not_verified
+            : err.response?.data?.message || LANG.err_login_failed;
           Swal.fire(LANG.error_title, msg, "error");
         }
       }
@@ -808,10 +815,14 @@
             "warning",
           );
         try {
-          const res = await api.register(email, password, confirm);
-          api.setToken(res.data.token);
-          api.setUser(res.data.user);
-          window.location.href = "dashboard.html";
+          await api.register(email, password, confirm);
+          closeModal("loginModal");
+          await Swal.fire({
+            icon: "success",
+            title: LANG.success_registered_title,
+            text: LANG.success_registered_text,
+            confirmButtonColor: "#1a237e",
+          });
         } catch (err) {
           const errors = err.response?.data?.errors;
           const msg = errors
@@ -875,6 +886,8 @@
             document.getElementById("subject").value;
           document.getElementById("btnSubmitLoggedIn").style.display =
             api.isLoggedIn() ? "block" : "none";
+          document.getElementById("hcaptchaContainer").style.display =
+            api.isLoggedIn() ? "none" : "block";
         }
         document
           .querySelectorAll(".step-content")
@@ -905,6 +918,12 @@
           openLogin();
           return;
         }
+        if (!withAccount) {
+          const captchaToken = typeof hcaptcha !== "undefined" ? hcaptcha.getResponse() : "";
+          if (!captchaToken)
+            return Swal.fire(LANG.warning_title, LANG.err_captcha_required, "warning");
+        }
+
         const data = {
           category: document.getElementById("category").value,
           subject: document.getElementById("subject").value.trim(),
@@ -918,6 +937,11 @@
             document.getElementById("involvedPersons").value.trim() ||
             undefined,
         };
+
+        if (!withAccount && typeof hcaptcha !== "undefined") {
+          data.hcaptcha_token = hcaptcha.getResponse();
+        }
+
         try {
           const res = await api.submitReport(data);
           const file = document.getElementById("attachmentFile").files[0];
@@ -945,6 +969,7 @@
             ).then(() => (window.location.href = "dashboard.html"));
           }
         } catch (err) {
+          if (!withAccount && typeof hcaptcha !== "undefined") hcaptcha.reset();
           const errors = err.response?.data?.errors;
           const msg = errors
             ? Object.values(errors).flat().join("\n")

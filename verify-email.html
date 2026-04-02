@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hinweisgeberportal</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="css/custom.css" />
+    <style>
+      .verify-wrap {
+        max-width: 440px;
+        margin: 60px auto;
+        padding: 0 24px;
+      }
+      .verify-card {
+        background: #fff;
+        border-radius: 10px;
+        padding: 48px 32px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      .verify-icon {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 24px;
+      }
+      .verify-icon.success { background: #e8f5e9; }
+      .verify-icon.error   { background: #ffebee; }
+      .verify-icon.already { background: #e8eaf6; }
+      .verify-icon i {
+        font-size: 32px;
+      }
+      .verify-icon.success i { color: #2e7d32; }
+      .verify-icon.error   i { color: #c62828; }
+      .verify-icon.already i { color: #1a237e; }
+      .verify-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #1a237e;
+        margin-bottom: 10px;
+      }
+      .verify-text {
+        font-size: 14px;
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 32px;
+      }
+      .btn-login {
+        display: inline-block;
+        padding: 12px 32px;
+        background: #1a237e;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background 0.2s;
+      }
+      .btn-login:hover {
+        background: #283593;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="logo">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span data-i18n="app_name"></span>
+      </div>
+      <div class="header-actions">
+        <button class="lang-switcher" onclick="switchLang()" data-i18n="lang_switch"></button>
+      </div>
+    </header>
+
+    <div class="verify-wrap">
+      <div class="verify-card" id="verifyCard">
+        <!-- filled by JS -->
+      </div>
+    </div>
+
+    <script>
+      const L = {
+        de: {
+          app_name: "Hinweisgeberportal",
+          lang_switch: "EN",
+          success_title: "E-Mail bestätigt",
+          success_text: "Ihre E-Mail-Adresse wurde erfolgreich bestätigt. Sie können sich jetzt anmelden.",
+          already_title: "Bereits bestätigt",
+          already_text: "Diese E-Mail-Adresse wurde bereits bestätigt. Sie können sich direkt anmelden.",
+          error_title: "Ungültiger Link",
+          error_text: "Dieser Bestätigungslink ist ungültig oder abgelaufen. Bitte registrieren Sie sich erneut oder wenden Sie sich an den Support.",
+          btn_login: "Zur Anmeldung",
+        },
+        en: {
+          app_name: "Whistleblower Portal",
+          lang_switch: "DE",
+          success_title: "Email Verified",
+          success_text: "Your email address has been successfully verified. You can now log in.",
+          already_title: "Already Verified",
+          already_text: "This email address has already been verified. You can log in directly.",
+          error_title: "Invalid Link",
+          error_text: "This verification link is invalid or has expired. Please register again or contact support.",
+          btn_login: "Go to Login",
+        },
+      };
+
+      let currentLang = localStorage.getItem("lang") || "de";
+      let T = L[currentLang] || L.de;
+
+      function applyLang() {
+        document.querySelectorAll("[data-i18n]").forEach((el) => {
+          const key = el.getAttribute("data-i18n");
+          if (T[key] !== undefined) el.textContent = T[key];
+        });
+        document.title = T.app_name;
+        renderCard();
+      }
+
+      function switchLang() {
+        currentLang = currentLang === "de" ? "en" : "de";
+        T = L[currentLang];
+        localStorage.setItem("lang", currentLang);
+        applyLang();
+      }
+
+      function renderCard() {
+        const params = new URLSearchParams(window.location.search);
+        const status = params.get("status");
+
+        let iconClass, iconName, title, text;
+
+        if (status === "success") {
+          iconClass = "success";
+          iconName  = "fa-circle-check";
+          title     = T.success_title;
+          text      = T.success_text;
+        } else if (status === "already") {
+          iconClass = "already";
+          iconName  = "fa-shield-check";
+          title     = T.already_title;
+          text      = T.already_text;
+        } else {
+          iconClass = "error";
+          iconName  = "fa-triangle-exclamation";
+          title     = T.error_title;
+          text      = T.error_text;
+        }
+
+        document.getElementById("verifyCard").innerHTML =
+          '<div class="verify-icon ' + iconClass + '">' +
+            '<i class="fa-solid ' + iconName + '"></i>' +
+          '</div>' +
+          '<div class="verify-title">' + title + '</div>' +
+          '<p class="verify-text">' + text + '</p>' +
+          (status !== "error"
+            ? '<a class="btn-login" href="index.html">' + T.btn_login + '</a>'
+            : "");
+      }
+
+      applyLang();
+    </script>
+  </body>
+</html>

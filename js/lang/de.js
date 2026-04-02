@@ -100,6 +100,10 @@ var LANG = {
   err_generic: "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
   err_login_failed: "Anmeldung fehlgeschlagen.",
   err_register_failed: "Registrierung fehlgeschlagen.",
+  err_email_not_verified: "Bitte bestätigen Sie Ihre E-Mail-Adresse, bevor Sie sich anmelden.",
+  err_captcha_required: "Bitte schließen Sie das CAPTCHA ab.",
+  success_registered_title: "Registrierung erfolgreich",
+  success_registered_text: "Bitte überprüfen Sie Ihr Postfach und klicken Sie auf den Bestätigungslink, um Ihr Konto zu aktivieren.",
   success_email_sent: "E-Mail gesendet",
   success_email_sent_text:
     "Falls diese E-Mail in unserem System existiert, erhalten Sie in Kürze einen Reset-Link.",

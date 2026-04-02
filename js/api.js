@@ -210,4 +210,12 @@ const api = {
   async superadminUnlockIdentity(referenceNumber) {
     return axios.get("/superadmin/reports/" + referenceNumber + "/unlock-identity");
   },
+
+  async superadminGetSettings() {
+    return axios.get("/superadmin/settings");
+  },
+
+  async superadminUpdateSettings(settings) {
+    return axios.patch("/superadmin/settings", settings);
+  },
 };

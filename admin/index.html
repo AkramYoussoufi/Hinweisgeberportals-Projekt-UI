@@ -587,6 +587,10 @@
             <i class="fa-solid fa-users-gear"></i>
             <span data-i18n="manage_admins"></span>
           </a>
+          <a id="navSettings" style="display:none" onclick="showView('settings', this)">
+            <i class="fa-solid fa-sliders"></i>
+            <span data-i18n="settings"></span>
+          </a>
           <div class="sidebar-divider"></div>
           <a onclick="doLogout()">
             <i class="fa-solid fa-right-from-bracket"></i>
@@ -700,6 +704,36 @@
                 <span data-i18n="no_admins"></span>
               </div>
             </div>
+          </div>
+        </div>
+
+        <!-- Superadmin: Portal Settings -->
+        <div id="viewSettings" style="display:none">
+          <div class="page-header">
+            <h1 class="page-title" data-i18n="settings"></h1>
+          </div>
+          <div class="report-card" style="max-width: 520px">
+            <p class="card-subtitle" style="margin-bottom: 24px" data-i18n="settings_subtitle"></p>
+
+            <div class="form-group" style="margin-bottom: 20px">
+              <label style="font-size: 13px; font-weight: 600; color: #444; display: block; margin-bottom: 6px" data-i18n="setting_max_reports_label"></label>
+              <p style="font-size: 12px; color: #888; margin-bottom: 6px" data-i18n="setting_max_reports_hint"></p>
+              <input type="number" id="settingMaxReports" min="1" max="1000" style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; box-sizing: border-box" />
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px">
+              <label style="font-size: 13px; font-weight: 600; color: #444; display: block; margin-bottom: 6px" data-i18n="setting_max_file_label"></label>
+              <p style="font-size: 12px; color: #888; margin-bottom: 6px" data-i18n="setting_max_file_hint"></p>
+              <input type="number" id="settingMaxFile" min="1" max="500" style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; box-sizing: border-box" />
+            </div>
+
+            <div class="form-group" style="margin-bottom: 28px">
+              <label style="font-size: 13px; font-weight: 600; color: #444; display: block; margin-bottom: 6px" data-i18n="setting_max_weekly_label"></label>
+              <p style="font-size: 12px; color: #888; margin-bottom: 6px" data-i18n="setting_max_weekly_hint"></p>
+              <input type="number" id="settingMaxWeekly" min="1" max="5000" style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; box-sizing: border-box" />
+            </div>
+
+            <button class="btn btn-blue" onclick="saveSettings()" data-i18n="btn_save_settings" style="width: 100%"></button>
           </div>
         </div>
       </main>
@@ -925,6 +959,16 @@
           label_email: "E-Mail",
           label_password: "Passwort",
           label_role: "Rolle",
+          settings: "Einstellungen",
+          settings_subtitle: "Konfigurieren Sie die Schwellenwerte des Portals.",
+          setting_max_reports_label: "Max. Hinweise pro Stunde pro IP",
+          setting_max_reports_hint: "Wie viele Hinweise darf eine IP-Adresse pro Stunde einreichen?",
+          setting_max_file_label: "Max. Dateigröße (MB)",
+          setting_max_file_hint: "Maximale Größe einer einzelnen hochgeladenen Datei.",
+          setting_max_weekly_label: "Max. Upload pro Woche pro Konto (MB)",
+          setting_max_weekly_hint: "Maximales Gesamt-Upload-Volumen pro Konto innerhalb von 7 Tagen.",
+          btn_save_settings: "Einstellungen speichern",
+          success_settings_saved: "Die Einstellungen wurden erfolgreich gespeichert.",
         },
         en: {
           app_name: "Whistleblower Portal",
@@ -1022,6 +1066,16 @@
           label_email: "Email",
           label_password: "Password",
           label_role: "Role",
+          settings: "Settings",
+          settings_subtitle: "Configure portal-wide thresholds.",
+          setting_max_reports_label: "Max reports per hour per IP",
+          setting_max_reports_hint: "How many reports can one IP address submit per hour?",
+          setting_max_file_label: "Max file size (MB)",
+          setting_max_file_hint: "Maximum size of a single uploaded file.",
+          setting_max_weekly_label: "Max upload per week per account (MB)",
+          setting_max_weekly_hint: "Maximum total upload volume per account within a rolling 7-day window.",
+          btn_save_settings: "Save Settings",
+          success_settings_saved: "Settings have been saved successfully.",
         },
       };
 
@@ -1070,12 +1124,48 @@
         if (el) el.classList.add("active");
         document.getElementById("viewReports").style.display = "none";
         document.getElementById("viewAdmins").style.display = "none";
+        document.getElementById("viewSettings").style.display = "none";
         if (view === "reports") {
           document.getElementById("viewReports").style.display = "block";
           loadReports();
         } else if (view === "admins") {
           document.getElementById("viewAdmins").style.display = "block";
           loadAdmins();
+        } else if (view === "settings") {
+          document.getElementById("viewSettings").style.display = "block";
+          loadSettings();
+        }
+      }
+
+      async function loadSettings() {
+        try {
+          const res = await api.superadminGetSettings();
+          const s = res.data.settings;
+          document.getElementById("settingMaxReports").value = s.max_reports_per_hour_per_ip;
+          document.getElementById("settingMaxFile").value    = s.max_file_size_mb;
+          document.getElementById("settingMaxWeekly").value  = s.max_upload_per_week_mb;
+        } catch (e) {
+          Swal.fire(T.error_title, T.err_generic, "error");
+        }
+      }
+
+      async function saveSettings() {
+        const maxReports = parseInt(document.getElementById("settingMaxReports").value);
+        const maxFile    = parseInt(document.getElementById("settingMaxFile").value);
+        const maxWeekly  = parseInt(document.getElementById("settingMaxWeekly").value);
+
+        if (!maxReports || !maxFile || !maxWeekly)
+          return Swal.fire(T.warning_title, T.err_fill_all, "warning");
+
+        try {
+          await api.superadminUpdateSettings({
+            max_reports_per_hour_per_ip: maxReports,
+            max_file_size_mb:            maxFile,
+            max_upload_per_week_mb:      maxWeekly,
+          });
+          Swal.fire({ icon: "success", title: T.success_title, text: T.success_settings_saved, timer: 2000, showConfirmButton: false });
+        } catch (err) {
+          Swal.fire(T.error_title, err.response?.data?.message || T.err_generic, "error");
         }
       }
 
@@ -1638,6 +1728,7 @@
       if (isSuperAdmin) {
         document.getElementById("superadminDivider").style.display = "block";
         document.getElementById("navManageAdmins").style.display = "flex";
+        document.getElementById("navSettings").style.display = "flex";
       }
 
       loadReports();
