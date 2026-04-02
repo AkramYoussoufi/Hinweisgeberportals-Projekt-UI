@@ -947,9 +947,17 @@
           const file = document.getElementById("attachmentFile").files[0];
           if (file) {
             try {
+              const anonToken = res.data.anonymous_access?.token;
+              if (anonToken) {
+                axios.defaults.headers.common["Authorization"] = "Bearer " + anonToken;
+              }
               await api.uploadAttachment(res.data.reference_number, file);
             } catch (e) {
               console.warn("Attachment upload failed:", e);
+            } finally {
+              if (!withAccount) {
+                delete axios.defaults.headers.common["Authorization"];
+              }
             }
           }
           closeModal("reportModal");
