@@ -46,7 +46,6 @@ Die Anwendung bedient drei verschiedene Nutzergruppen, jede mit eigener Oberflä
 | Schicht                | Technologie                                                   |
 | ---------------------- | ------------------------------------------------------------- |
 | Sprache                | Vanilla JavaScript (ES6+)                                     |
-| UI-Framework           | Webix (CDN)                                                   |
 | Gestaltung             | Benutzerdefiniertes CSS (`css/custom.css`)                    |
 | HTTP-Client            | Axios (CDN)                                                   |
 | Hinweisdialoge         | SweetAlert2 (CDN)                                             |
@@ -120,7 +119,7 @@ Wird mit `?ref=HIN-YYYY-XXXX` als Abfrageparameter geladen. Zeigt alles zu einer
 
 **Zugang:** Nutzer mit Rolle `admin` oder `superadmin`
 
-Eine vollständige Fallverwaltungsoberfläche, aufgebaut mit Webix-Komponenten:
+Eine vollständige Fallverwaltungsoberfläche:
 
 **Seitenleisten-Navigation**
 
@@ -342,7 +341,6 @@ Die Oberfläche enthält vollständige **Deutsch- (Standard)** und **Englisch-**
 #### Ansatz
 
 - **`css/custom.css`** für alle Komponentenstile (Karten, Schaltflächen, Seitenleiste, Formulare, Modals, Admin-Tabellen)
-- Webix-Komponenten für die Admin-Oberfläche
 
 #### Farbpalette
 
@@ -478,7 +476,6 @@ The application serves three distinct user groups, each with their own interface
 | Layer                 | Technology                                             |
 | --------------------- | ------------------------------------------------------ |
 | Language              | Vanilla JavaScript (ES6+)                              |
-| UI Framework          | Webix (CDN)                                            |
 | Styling               | Custom CSS (`css/custom.css`)                          |
 | HTTP Client           | Axios (CDN)                                            |
 | Alert Dialogs         | SweetAlert2 (CDN)                                      |
@@ -552,7 +549,7 @@ Loaded with `?ref=HIN-YYYY-XXXX` as a query parameter. Shows everything about a 
 
 **Access:** Users with role `admin` or `superadmin`
 
-A full case management interface built with Webix components:
+A full case management interface:
 
 **Sidebar Navigation**
 
@@ -774,7 +771,6 @@ The UI ships with full **German (default)** and **English** translations.
 #### Approach
 
 - **`css/custom.css`** for all component styles (cards, buttons, sidebar, forms, modals, admin tables)
-- Webix components for the admin interface
 
 #### Color Palette
 
