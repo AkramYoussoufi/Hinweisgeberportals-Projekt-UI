@@ -31,15 +31,27 @@
         justify-content: center;
         margin: 0 auto 24px;
       }
-      .verify-icon.success { background: #e8f5e9; }
-      .verify-icon.error   { background: #ffebee; }
-      .verify-icon.already { background: #e8eaf6; }
+      .verify-icon.success {
+        background: #e8f5e9;
+      }
+      .verify-icon.error {
+        background: #ffebee;
+      }
+      .verify-icon.already {
+        background: #e8eaf6;
+      }
       .verify-icon i {
         font-size: 32px;
       }
-      .verify-icon.success i { color: #2e7d32; }
-      .verify-icon.error   i { color: #c62828; }
-      .verify-icon.already i { color: #1a237e; }
+      .verify-icon.success i {
+        color: #2e7d32;
+      }
+      .verify-icon.error i {
+        color: #c62828;
+      }
+      .verify-icon.already i {
+        color: #1a237e;
+      }
       .verify-title {
         font-size: 22px;
         font-weight: 700;
@@ -77,14 +89,16 @@
         <span data-i18n="app_name"></span>
       </div>
       <div class="header-actions">
-        <button class="lang-switcher" onclick="switchLang()" data-i18n="lang_switch"></button>
+        <button
+          class="lang-switcher"
+          onclick="switchLang()"
+          data-i18n="lang_switch"
+        ></button>
       </div>
     </header>
 
     <div class="verify-wrap">
-      <div class="verify-card" id="verifyCard">
-        <!-- filled by JS -->
-      </div>
+      <div class="verify-card" id="verifyCard"></div>
     </div>
 
     <script>
@@ -93,22 +107,28 @@
           app_name: "Hinweisgeberportal",
           lang_switch: "EN",
           success_title: "E-Mail bestätigt",
-          success_text: "Ihre E-Mail-Adresse wurde erfolgreich bestätigt. Sie können sich jetzt anmelden.",
+          success_text:
+            "Ihre E-Mail-Adresse wurde erfolgreich bestätigt. Sie können sich jetzt anmelden.",
           already_title: "Bereits bestätigt",
-          already_text: "Diese E-Mail-Adresse wurde bereits bestätigt. Sie können sich direkt anmelden.",
+          already_text:
+            "Diese E-Mail-Adresse wurde bereits bestätigt. Sie können sich direkt anmelden.",
           error_title: "Ungültiger Link",
-          error_text: "Dieser Bestätigungslink ist ungültig oder abgelaufen. Bitte registrieren Sie sich erneut oder wenden Sie sich an den Support.",
+          error_text:
+            "Dieser Bestätigungslink ist ungültig oder abgelaufen. Bitte registrieren Sie sich erneut oder wenden Sie sich an den Support.",
           btn_login: "Zur Anmeldung",
         },
         en: {
           app_name: "Whistleblower Portal",
           lang_switch: "DE",
           success_title: "Email Verified",
-          success_text: "Your email address has been successfully verified. You can now log in.",
+          success_text:
+            "Your email address has been successfully verified. You can now log in.",
           already_title: "Already Verified",
-          already_text: "This email address has already been verified. You can log in directly.",
+          already_text:
+            "This email address has already been verified. You can log in directly.",
           error_title: "Invalid Link",
-          error_text: "This verification link is invalid or has expired. Please register again or contact support.",
+          error_text:
+            "This verification link is invalid or has expired. Please register again or contact support.",
           btn_login: "Go to Login",
         },
       };
@@ -140,29 +160,37 @@
 
         if (status === "success") {
           iconClass = "success";
-          iconName  = "fa-circle-check";
-          title     = T.success_title;
-          text      = T.success_text;
+          iconName = "fa-circle-check";
+          title = T.success_title;
+          text = T.success_text;
         } else if (status === "already") {
           iconClass = "already";
-          iconName  = "fa-shield-check";
-          title     = T.already_title;
-          text      = T.already_text;
+          iconName = "fa-shield-check";
+          title = T.already_title;
+          text = T.already_text;
         } else {
           iconClass = "error";
-          iconName  = "fa-triangle-exclamation";
-          title     = T.error_title;
-          text      = T.error_text;
+          iconName = "fa-triangle-exclamation";
+          title = T.error_title;
+          text = T.error_text;
         }
 
         document.getElementById("verifyCard").innerHTML =
-          '<div class="verify-icon ' + iconClass + '">' +
-            '<i class="fa-solid ' + iconName + '"></i>' +
-          '</div>' +
-          '<div class="verify-title">' + title + '</div>' +
-          '<p class="verify-text">' + text + '</p>' +
+          '<div class="verify-icon ' +
+          iconClass +
+          '">' +
+          '<i class="fa-solid ' +
+          iconName +
+          '"></i>' +
+          "</div>" +
+          '<div class="verify-title">' +
+          title +
+          "</div>" +
+          '<p class="verify-text">' +
+          text +
+          "</p>" +
           (status !== "error"
-            ? '<a class="btn-login" href="index.html">' + T.btn_login + '</a>'
+            ? '<a class="btn-login" href="index.html">' + T.btn_login + "</a>"
             : "");
       }
 

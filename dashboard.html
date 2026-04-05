@@ -372,7 +372,9 @@
         cursor: pointer;
         color: #999;
       }
-      .modal-close:hover { color: #333; }
+      .modal-close:hover {
+        color: #333;
+      }
       .card-title {
         font-size: 20px;
         font-weight: 700;
@@ -384,7 +386,9 @@
         color: #666;
         margin-bottom: 20px;
       }
-      .form-group { margin-bottom: 16px; }
+      .form-group {
+        margin-bottom: 16px;
+      }
       .form-group label {
         display: block;
         font-size: 13px;
@@ -410,10 +414,22 @@
         outline: none;
         border-color: #1a237e;
       }
-      .form-group textarea { resize: vertical; min-height: 100px; }
-      .form-actions { display: flex; gap: 12px; margin-top: 24px; }
-      .btn-green { background: #43a047; color: #fff; }
-      .btn-green:hover { background: #388e3c; }
+      .form-group textarea {
+        resize: vertical;
+        min-height: 100px;
+      }
+      .form-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+      }
+      .btn-green {
+        background: #43a047;
+        color: #fff;
+      }
+      .btn-green:hover {
+        background: #388e3c;
+      }
       .step-tabs {
         display: flex;
         margin-bottom: 28px;
@@ -428,10 +444,20 @@
         margin-bottom: -2px;
         cursor: default;
       }
-      .step-tab.active { color: #1a237e; border-bottom-color: #1a237e; }
-      .step-tab.done { color: #43a047; border-bottom-color: #43a047; }
-      .step-content { display: none; }
-      .step-content.active { display: block; }
+      .step-tab.active {
+        color: #1a237e;
+        border-bottom-color: #1a237e;
+      }
+      .step-tab.done {
+        color: #43a047;
+        border-bottom-color: #43a047;
+      }
+      .step-content {
+        display: none;
+      }
+      .step-content.active {
+        display: block;
+      }
       .divider {
         text-align: center;
         margin: 16px 0;
@@ -439,7 +465,8 @@
         font-size: 13px;
         position: relative;
       }
-      .divider::before, .divider::after {
+      .divider::before,
+      .divider::after {
         content: "";
         position: absolute;
         top: 50%;
@@ -447,9 +474,18 @@
         height: 1px;
         background: #e0e0e0;
       }
-      .divider::before { left: 0; }
-      .divider::after { right: 0; }
-      .optional-tag { font-size: 11px; color: #999; font-weight: 400; margin-left: 4px; }
+      .divider::before {
+        left: 0;
+      }
+      .divider::after {
+        right: 0;
+      }
+      .optional-tag {
+        font-size: 11px;
+        color: #999;
+        font-weight: 400;
+        margin-left: 4px;
+      }
       .credentials-box {
         background: #fff8e1;
         border: 1px solid #ffe082;
@@ -465,9 +501,19 @@
         border-bottom: 1px solid #ffe082;
         font-size: 13px;
       }
-      .credential-item:last-child { border-bottom: none; }
-      .credential-label { font-weight: 600; color: #555; }
-      .credential-value { font-family: monospace; font-size: 13px; color: #1a237e; word-break: break-all; }
+      .credential-item:last-child {
+        border-bottom: none;
+      }
+      .credential-label {
+        font-weight: 600;
+        color: #555;
+      }
+      .credential-value {
+        font-family: monospace;
+        font-size: 13px;
+        color: #1a237e;
+        word-break: break-all;
+      }
       @media (max-width: 768px) {
         .dashboard-layout {
           flex-direction: column;
@@ -674,7 +720,6 @@
       </main>
     </div>
 
-    <!-- New Report Modal -->
     <div class="modal-overlay" id="reportModal">
       <div class="modal-box">
         <button class="modal-close" onclick="closeModal('reportModal')">
@@ -696,13 +741,20 @@
               <option value="fraud" data-i18n="cat_fraud"></option>
               <option value="harassment" data-i18n="cat_harassment"></option>
               <option value="safety" data-i18n="cat_safety"></option>
-              <option value="discrimination" data-i18n="cat_discrimination"></option>
+              <option
+                value="discrimination"
+                data-i18n="cat_discrimination"
+              ></option>
               <option value="other" data-i18n="cat_other"></option>
             </select>
           </div>
           <div class="form-group">
             <label data-i18n="label_subject"></label>
-            <input type="text" id="rSubject" data-i18n-placeholder="placeholder_subject" />
+            <input
+              type="text"
+              id="rSubject"
+              data-i18n-placeholder="placeholder_subject"
+            />
           </div>
           <div class="form-actions">
             <button class="btn btn-blue" onclick="goStep(2)">
@@ -716,7 +768,10 @@
           <p class="card-subtitle" data-i18n="step2_subtitle"></p>
           <div class="form-group">
             <label data-i18n="label_description"></label>
-            <textarea id="rDescription" data-i18n-placeholder="placeholder_description"></textarea>
+            <textarea
+              id="rDescription"
+              data-i18n-placeholder="placeholder_description"
+            ></textarea>
           </div>
           <div class="form-group">
             <label>
@@ -730,14 +785,22 @@
               <span data-i18n="label_incident_location"></span>
               <span class="optional-tag" data-i18n="optional"></span>
             </label>
-            <input type="text" id="rIncidentLocation" data-i18n-placeholder="placeholder_location" />
+            <input
+              type="text"
+              id="rIncidentLocation"
+              data-i18n-placeholder="placeholder_location"
+            />
           </div>
           <div class="form-group">
             <label>
               <span data-i18n="label_involved_persons"></span>
               <span class="optional-tag" data-i18n="optional"></span>
             </label>
-            <input type="text" id="rInvolvedPersons" data-i18n-placeholder="placeholder_persons" />
+            <input
+              type="text"
+              id="rInvolvedPersons"
+              data-i18n-placeholder="placeholder_persons"
+            />
           </div>
           <div class="form-actions">
             <button class="btn btn-gray" onclick="goStep(1)">
@@ -758,11 +821,18 @@
               <span data-i18n="label_file"></span>
               <span class="optional-tag" data-i18n="optional"></span>
             </label>
-            <input type="file" id="rAttachmentFile" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.mp4,.mp3,.wav" />
-            <p style="font-size: 12px; color: #999; margin-top: 6px" data-i18n="file_hint"></p>
+            <input
+              type="file"
+              id="rAttachmentFile"
+              accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.mp4,.mp3,.wav"
+            />
+            <p
+              style="font-size: 12px; color: #999; margin-top: 6px"
+              data-i18n="file_hint"
+            ></p>
           </div>
-          <div id="rAttachmentPreview" style="display:none; margin-top:8px">
-            <p style="font-size:13px; color:#43a047">
+          <div id="rAttachmentPreview" style="display: none; margin-top: 8px">
+            <p style="font-size: 13px; color: #43a047">
               <i class="fa-solid fa-check"></i>
               <span id="rAttachmentName"></span>
             </p>
@@ -781,12 +851,30 @@
         <div class="step-content" id="step4">
           <h2 class="card-title" data-i18n="step4_title"></h2>
           <p class="card-subtitle" data-i18n="step4_subtitle"></p>
-          <div style="background:#f5f5f5; border-radius:6px; padding:16px; margin-bottom:20px; font-size:13px;">
-            <p><strong data-i18n="summary_category"></strong>: <span id="rSummaryCategory"></span></p>
-            <p style="margin-top:6px"><strong data-i18n="summary_subject"></strong>: <span id="rSummarySubject"></span></p>
+          <div
+            style="
+              background: #f5f5f5;
+              border-radius: 6px;
+              padding: 16px;
+              margin-bottom: 20px;
+              font-size: 13px;
+            "
+          >
+            <p>
+              <strong data-i18n="summary_category"></strong>:
+              <span id="rSummaryCategory"></span>
+            </p>
+            <p style="margin-top: 6px">
+              <strong data-i18n="summary_subject"></strong>:
+              <span id="rSummarySubject"></span>
+            </p>
           </div>
-          <div class="form-actions" style="flex-direction:column; gap:12px">
-            <button class="btn btn-blue" style="width:100%" onclick="submitReport()">
+          <div class="form-actions" style="flex-direction: column; gap: 12px">
+            <button
+              class="btn btn-blue"
+              style="width: 100%"
+              onclick="submitReport()"
+            >
               <i class="fa-solid fa-paper-plane"></i>
               <span data-i18n="btn_submit_account"></span>
             </button>
@@ -846,23 +934,28 @@
           tab3: "3. Anhänge",
           tab4: "4. Absenden",
           step1_title: "Was möchten Sie melden?",
-          step1_subtitle: "Wählen Sie die Kategorie, die am besten zu Ihrem Hinweis passt.",
+          step1_subtitle:
+            "Wählen Sie die Kategorie, die am besten zu Ihrem Hinweis passt.",
           step2_title: "Details des Vorfalls",
-          step2_subtitle: "Je mehr Details Sie angeben, desto besser können wir Ihren Hinweis bearbeiten.",
+          step2_subtitle:
+            "Je mehr Details Sie angeben, desto besser können wir Ihren Hinweis bearbeiten.",
           step3_title: "Anhänge",
           step3_subtitle: "Fügen Sie optional Beweise oder Dokumente hinzu.",
           step4_title: "Hinweis absenden",
-          step4_subtitle: "Überprüfen Sie Ihre Angaben und senden Sie den Hinweis ab.",
+          step4_subtitle:
+            "Überprüfen Sie Ihre Angaben und senden Sie den Hinweis ab.",
           label_subject: "Betreff *",
           label_file: "Datei hochladen",
           cat_select: "— Bitte wählen —",
           optional: "(optional)",
           btn_next: "Weiter",
           placeholder_subject: "Kurze Zusammenfassung des Vorfalls",
-          placeholder_description: "Beschreiben Sie den Vorfall so detailliert wie möglich (mind. 20 Zeichen)",
+          placeholder_description:
+            "Beschreiben Sie den Vorfall so detailliert wie möglich (mind. 20 Zeichen)",
           placeholder_location: "z.B. Büro Berlin, Abteilung X",
           placeholder_persons: "z.B. Name, Position",
-          file_hint: "Erlaubte Formate: PDF, Word, Bild, Video, Audio — Max. 50MB",
+          file_hint:
+            "Erlaubte Formate: PDF, Word, Bild, Video, Audio — Max. 50MB",
           btn_submit_account: "Hinweis einreichen",
           or_divider: "oder",
           summary_category: "Kategorie",
@@ -870,7 +963,8 @@
           err_fill_all: "Bitte füllen Sie alle Felder aus.",
           err_select_category: "Bitte wählen Sie eine Kategorie.",
           err_enter_subject: "Bitte geben Sie einen Betreff ein.",
-          err_description_short: "Die Beschreibung muss mindestens 20 Zeichen lang sein.",
+          err_description_short:
+            "Die Beschreibung muss mindestens 20 Zeichen lang sein.",
           success_submitted_title: "Erfolgreich eingereicht",
           success_submitted_text: "Ihre Vorgangsnummer: ",
         },
@@ -917,7 +1011,8 @@
           step1_title: "What would you like to report?",
           step1_subtitle: "Select the category that best fits your report.",
           step2_title: "Incident Details",
-          step2_subtitle: "The more details you provide, the better we can process your report.",
+          step2_subtitle:
+            "The more details you provide, the better we can process your report.",
           step3_title: "Attachments",
           step3_subtitle: "Optionally add evidence or documents.",
           step4_title: "Submit Report",
@@ -928,10 +1023,12 @@
           optional: "(optional)",
           btn_next: "Next",
           placeholder_subject: "Brief summary of the incident",
-          placeholder_description: "Describe the incident in as much detail as possible (min. 20 characters)",
+          placeholder_description:
+            "Describe the incident in as much detail as possible (min. 20 characters)",
           placeholder_location: "e.g. Berlin office, Department X",
           placeholder_persons: "e.g. Name, Position",
-          file_hint: "Allowed formats: PDF, Word, Image, Video, Audio — Max. 50MB",
+          file_hint:
+            "Allowed formats: PDF, Word, Image, Video, Audio — Max. 50MB",
           btn_submit_account: "Submit Report",
           or_divider: "or",
           summary_category: "Category",
@@ -939,7 +1036,8 @@
           err_fill_all: "Please fill in all fields.",
           err_select_category: "Please select a category.",
           err_enter_subject: "Please enter a subject.",
-          err_description_short: "Description must be at least 20 characters long.",
+          err_description_short:
+            "Description must be at least 20 characters long.",
           success_submitted_title: "Successfully Submitted",
           success_submitted_text: "Your reference number: ",
         },
@@ -1267,7 +1365,6 @@
       let currentStep = 1;
 
       function openNewReport() {
-        // Reset form
         document.getElementById("rCategory").value = "";
         document.getElementById("rSubject").value = "";
         document.getElementById("rDescription").value = "";
@@ -1289,19 +1386,28 @@
         }
         if (step === 3) {
           if (document.getElementById("rDescription").value.trim().length < 20)
-            return Swal.fire(T.warning_title, T.err_description_short, "warning");
+            return Swal.fire(
+              T.warning_title,
+              T.err_description_short,
+              "warning",
+            );
         }
         if (step === 4) {
           const catMap = {
-            fraud: T.cat_fraud, harassment: T.cat_harassment,
-            safety: T.cat_safety, discrimination: T.cat_discrimination, other: T.cat_other,
+            fraud: T.cat_fraud,
+            harassment: T.cat_harassment,
+            safety: T.cat_safety,
+            discrimination: T.cat_discrimination,
+            other: T.cat_other,
           };
           document.getElementById("rSummaryCategory").textContent =
             catMap[document.getElementById("rCategory").value] || "";
           document.getElementById("rSummarySubject").textContent =
             document.getElementById("rSubject").value;
         }
-        document.querySelectorAll(".step-content").forEach((el) => el.classList.remove("active"));
+        document
+          .querySelectorAll(".step-content")
+          .forEach((el) => el.classList.remove("active"));
         document.getElementById("step" + step).classList.add("active");
         document.querySelectorAll(".step-tab").forEach((tab, i) => {
           tab.classList.remove("active", "done");
@@ -1311,21 +1417,30 @@
         currentStep = step;
       }
 
-      document.getElementById("rAttachmentFile").addEventListener("change", function () {
-        if (this.files[0]) {
-          document.getElementById("rAttachmentName").textContent = this.files[0].name;
-          document.getElementById("rAttachmentPreview").style.display = "block";
-        }
-      });
+      document
+        .getElementById("rAttachmentFile")
+        .addEventListener("change", function () {
+          if (this.files[0]) {
+            document.getElementById("rAttachmentName").textContent =
+              this.files[0].name;
+            document.getElementById("rAttachmentPreview").style.display =
+              "block";
+          }
+        });
 
       async function submitReport() {
         const data = {
           category: document.getElementById("rCategory").value,
           subject: document.getElementById("rSubject").value.trim(),
           description: document.getElementById("rDescription").value.trim(),
-          incident_date: document.getElementById("rIncidentDate").value || undefined,
-          incident_location: document.getElementById("rIncidentLocation").value.trim() || undefined,
-          involved_persons: document.getElementById("rInvolvedPersons").value.trim() || undefined,
+          incident_date:
+            document.getElementById("rIncidentDate").value || undefined,
+          incident_location:
+            document.getElementById("rIncidentLocation").value.trim() ||
+            undefined,
+          involved_persons:
+            document.getElementById("rInvolvedPersons").value.trim() ||
+            undefined,
         };
         try {
           const res = await api.submitReport(data);
@@ -1341,7 +1456,7 @@
           await Swal.fire(
             T.success_submitted_title,
             T.success_submitted_text + res.data.reference_number,
-            "success"
+            "success",
           );
           loadReports();
         } catch (err) {

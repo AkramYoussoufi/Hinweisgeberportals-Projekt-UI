@@ -110,4 +110,5 @@ var LANG = {
   copied_text: "Credentials copied to clipboard.",
   error_title: "Error",
   warning_title: "Warning",
+  err_attachment_upload: "Your report was submitted but the attachment could not be uploaded. You can add it later from the tracking page.",
 };

@@ -1,10 +1,9 @@
-// --- Global spinner ---
 (function () {
   const el = document.createElement("div");
   el.id = "global-spinner";
   el.innerHTML = '<div class="spinner-ring"></div>';
   document.addEventListener("DOMContentLoaded", () =>
-    document.body.appendChild(el)
+    document.body.appendChild(el),
   );
 
   let _pending = 0;
@@ -30,14 +29,19 @@ const api = {
       axios.defaults.headers.common["Authorization"] = "Bearer " + this._token;
     }
 
-    // Show spinner on every request, hide on response/error
     axios.interceptors.request.use((config) => {
       window._spinnerShow();
       return config;
     });
     axios.interceptors.response.use(
-      (response) => { window._spinnerHide(); return response; },
-      (error) => { window._spinnerHide(); return Promise.reject(error); }
+      (response) => {
+        window._spinnerHide();
+        return response;
+      },
+      (error) => {
+        window._spinnerHide();
+        return Promise.reject(error);
+      },
     );
   },
 
@@ -138,12 +142,14 @@ const api = {
   async uploadAttachment(referenceNumber, file, authToken = null) {
     const formData = new FormData();
     formData.append("file", file);
-    const headers = { "Content-Type": "multipart/form-data" };
-    if (authToken) headers["Authorization"] = "Bearer " + authToken;
+    const config = {};
+    if (authToken) {
+      config.headers = { Authorization: "Bearer " + authToken };
+    }
     return axios.post(
       "/reports/" + referenceNumber + "/attachments",
       formData,
-      { headers },
+      config,
     );
   },
 
@@ -188,7 +194,12 @@ const api = {
   },
 
   async superadminCreateAdmin(email, password, role) {
-    return axios.post("/superadmin/admins", { email, password, password_confirmation: password, role });
+    return axios.post("/superadmin/admins", {
+      email,
+      password,
+      password_confirmation: password,
+      role,
+    });
   },
 
   async superadminDeactivateAdmin(adminId) {
@@ -204,11 +215,15 @@ const api = {
   },
 
   async superadminChangeAdminPassword(adminId, password) {
-    return axios.patch("/superadmin/admins/" + adminId + "/password", { password });
+    return axios.patch("/superadmin/admins/" + adminId + "/password", {
+      password,
+    });
   },
 
   async superadminUnlockIdentity(referenceNumber) {
-    return axios.get("/superadmin/reports/" + referenceNumber + "/unlock-identity");
+    return axios.get(
+      "/superadmin/reports/" + referenceNumber + "/unlock-identity",
+    );
   },
 
   async superadminGetSettings() {

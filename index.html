@@ -951,6 +951,11 @@
               await api.uploadAttachment(res.data.reference_number, file, anonToken);
             } catch (e) {
               console.warn("Attachment upload failed:", e);
+              Swal.fire(
+                LANG.warning_title || "Warning",
+                (LANG.err_attachment_upload || "Your report was submitted but the attachment could not be uploaded. You can add it later from the tracking page."),
+                "warning"
+              );
             }
           }
           closeModal("reportModal");

@@ -474,10 +474,20 @@
         color: #999;
         margin-top: 4px;
       }
-      .btn-red { background: #c62828; color: #fff; }
-      .btn-red:hover { background: #b71c1c; }
-      .btn-orange { background: #e65100; color: #fff; }
-      .btn-orange:hover { background: #bf360c; }
+      .btn-red {
+        background: #c62828;
+        color: #fff;
+      }
+      .btn-red:hover {
+        background: #b71c1c;
+      }
+      .btn-orange {
+        background: #e65100;
+        color: #fff;
+      }
+      .btn-orange:hover {
+        background: #bf360c;
+      }
       .admins-table {
         background: #fff;
         border-radius: 8px;
@@ -504,7 +514,9 @@
         align-items: center;
         font-size: 13px;
       }
-      .admins-table-row:last-child { border-bottom: none; }
+      .admins-table-row:last-child {
+        border-bottom: none;
+      }
       .identity-box {
         background: #fff8e1;
         border: 1px solid #ffe082;
@@ -582,12 +594,24 @@
             <i class="fa-solid fa-inbox"></i>
             <span data-i18n="all_reports"></span>
           </a>
-          <div class="sidebar-divider" id="superadminDivider" style="display:none"></div>
-          <a id="navManageAdmins" style="display:none" onclick="showView('admins', this)">
+          <div
+            class="sidebar-divider"
+            id="superadminDivider"
+            style="display: none"
+          ></div>
+          <a
+            id="navManageAdmins"
+            style="display: none"
+            onclick="showView('admins', this)"
+          >
             <i class="fa-solid fa-users-gear"></i>
             <span data-i18n="manage_admins"></span>
           </a>
-          <a id="navSettings" style="display:none" onclick="showView('settings', this)">
+          <a
+            id="navSettings"
+            style="display: none"
+            onclick="showView('settings', this)"
+          >
             <i class="fa-solid fa-sliders"></i>
             <span data-i18n="settings"></span>
           </a>
@@ -682,8 +706,7 @@
           </div>
         </div>
 
-        <!-- Superadmin: Manage Admins -->
-        <div id="viewAdmins" style="display:none">
+        <div id="viewAdmins" style="display: none">
           <div class="page-header">
             <h1 class="page-title" data-i18n="manage_admins"></h1>
             <button class="btn btn-blue" onclick="createAdmin()">
@@ -707,33 +730,116 @@
           </div>
         </div>
 
-        <!-- Superadmin: Portal Settings -->
-        <div id="viewSettings" style="display:none">
+        <div id="viewSettings" style="display: none">
           <div class="page-header">
             <h1 class="page-title" data-i18n="settings"></h1>
           </div>
           <div class="report-card" style="max-width: 520px">
-            <p class="card-subtitle" style="margin-bottom: 24px" data-i18n="settings_subtitle"></p>
+            <p
+              class="card-subtitle"
+              style="margin-bottom: 24px"
+              data-i18n="settings_subtitle"
+            ></p>
 
             <div class="form-group" style="margin-bottom: 20px">
-              <label style="font-size: 13px; font-weight: 600; color: #444; display: block; margin-bottom: 6px" data-i18n="setting_max_reports_label"></label>
-              <p style="font-size: 12px; color: #888; margin-bottom: 6px" data-i18n="setting_max_reports_hint"></p>
-              <input type="number" id="settingMaxReports" min="1" max="1000" style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; box-sizing: border-box" />
+              <label
+                style="
+                  font-size: 13px;
+                  font-weight: 600;
+                  color: #444;
+                  display: block;
+                  margin-bottom: 6px;
+                "
+                data-i18n="setting_max_reports_label"
+              ></label>
+              <p
+                style="font-size: 12px; color: #888; margin-bottom: 6px"
+                data-i18n="setting_max_reports_hint"
+              ></p>
+              <input
+                type="number"
+                id="settingMaxReports"
+                min="1"
+                max="1000"
+                style="
+                  width: 100%;
+                  padding: 10px 12px;
+                  border: 1px solid #ddd;
+                  border-radius: 6px;
+                  font-size: 14px;
+                  box-sizing: border-box;
+                "
+              />
             </div>
 
             <div class="form-group" style="margin-bottom: 20px">
-              <label style="font-size: 13px; font-weight: 600; color: #444; display: block; margin-bottom: 6px" data-i18n="setting_max_file_label"></label>
-              <p style="font-size: 12px; color: #888; margin-bottom: 6px" data-i18n="setting_max_file_hint"></p>
-              <input type="number" id="settingMaxFile" min="1" max="500" style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; box-sizing: border-box" />
+              <label
+                style="
+                  font-size: 13px;
+                  font-weight: 600;
+                  color: #444;
+                  display: block;
+                  margin-bottom: 6px;
+                "
+                data-i18n="setting_max_file_label"
+              ></label>
+              <p
+                style="font-size: 12px; color: #888; margin-bottom: 6px"
+                data-i18n="setting_max_file_hint"
+              ></p>
+              <input
+                type="number"
+                id="settingMaxFile"
+                min="1"
+                max="500"
+                style="
+                  width: 100%;
+                  padding: 10px 12px;
+                  border: 1px solid #ddd;
+                  border-radius: 6px;
+                  font-size: 14px;
+                  box-sizing: border-box;
+                "
+              />
             </div>
 
             <div class="form-group" style="margin-bottom: 28px">
-              <label style="font-size: 13px; font-weight: 600; color: #444; display: block; margin-bottom: 6px" data-i18n="setting_max_weekly_label"></label>
-              <p style="font-size: 12px; color: #888; margin-bottom: 6px" data-i18n="setting_max_weekly_hint"></p>
-              <input type="number" id="settingMaxWeekly" min="1" max="5000" style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; box-sizing: border-box" />
+              <label
+                style="
+                  font-size: 13px;
+                  font-weight: 600;
+                  color: #444;
+                  display: block;
+                  margin-bottom: 6px;
+                "
+                data-i18n="setting_max_weekly_label"
+              ></label>
+              <p
+                style="font-size: 12px; color: #888; margin-bottom: 6px"
+                data-i18n="setting_max_weekly_hint"
+              ></p>
+              <input
+                type="number"
+                id="settingMaxWeekly"
+                min="1"
+                max="5000"
+                style="
+                  width: 100%;
+                  padding: 10px 12px;
+                  border: 1px solid #ddd;
+                  border-radius: 6px;
+                  font-size: 14px;
+                  box-sizing: border-box;
+                "
+              />
             </div>
 
-            <button class="btn btn-blue" onclick="saveSettings()" data-i18n="btn_save_settings" style="width: 100%"></button>
+            <button
+              class="btn btn-blue"
+              onclick="saveSettings()"
+              data-i18n="btn_save_settings"
+              style="width: 100%"
+            ></button>
           </div>
         </div>
       </main>
@@ -794,8 +900,7 @@
           </div>
         </div>
 
-        <!-- Superadmin only: Identity unlock -->
-        <div class="panel-section" id="identitySection" style="display:none">
+        <div class="panel-section" id="identitySection" style="display: none">
           <div class="panel-section-title" data-i18n="section_identity"></div>
           <div id="identityBox" class="identity-box"></div>
         </div>
@@ -932,10 +1037,12 @@
           status_active: "Aktiv",
           status_deactivated: "Deaktiviert",
           confirm_reactivate_title: "Admin reaktivieren?",
-          confirm_reactivate: "Der Admin erhält wieder Zugriff auf den Verwaltungsbereich.",
+          confirm_reactivate:
+            "Der Admin erhält wieder Zugriff auf den Verwaltungsbereich.",
           yes_reactivate: "Ja, reaktivieren",
           confirm_delete_title: "Admin löschen?",
-          confirm_delete: "Das Konto wird dauerhaft gelöscht. Audit-Einträge dieses Admins bleiben erhalten.",
+          confirm_delete:
+            "Das Konto wird dauerhaft gelöscht. Audit-Einträge dieses Admins bleiben erhalten.",
           yes_delete: "Ja, löschen",
           new_password_title: "Neues Passwort",
           new_password_label: "Neues Passwort (mind. 8 Zeichen)",
@@ -944,15 +1051,19 @@
           success_change_password: "Passwort wurde geändert.",
           section_identity: "Identität (Superadmin)",
           btn_unlock_identity: "Identität freischalten",
-          identity_anonymous: "Anonymer Hinweis — keine Identitätsdaten vorhanden.",
-          identity_has_account: "Whistleblower hat ein Konto. Identität ist gesperrt.",
+          identity_anonymous:
+            "Anonymer Hinweis — keine Identitätsdaten vorhanden.",
+          identity_has_account:
+            "Whistleblower hat ein Konto. Identität ist gesperrt.",
           confirm_unlock_title: "Identität freischalten?",
-          confirm_unlock: "Diese Aktion wird dauerhaft in der Prüfspur protokolliert. Nur fortfahren, wenn rechtlich erforderlich (z.B. Gerichtsbeschluss).",
+          confirm_unlock:
+            "Diese Aktion wird dauerhaft in der Prüfspur protokolliert. Nur fortfahren, wenn rechtlich erforderlich (z.B. Gerichtsbeschluss).",
           yes_unlock: "Ja, freischalten",
           confirm_deactivate_title: "Admin deaktivieren?",
           confirm_deactivate: "Der Admin verliert sofort alle Berechtigungen.",
           yes_deactivate: "Ja, deaktivieren",
-          success_unlock: "Identität freigeschaltet. Aktion ist dauerhaft protokolliert.",
+          success_unlock:
+            "Identität freigeschaltet. Aktion ist dauerhaft protokolliert.",
           success_deactivate: "Admin wurde deaktiviert.",
           success_create_admin: "Admin-Konto wurde erfolgreich erstellt.",
           err_fill_all: "Bitte füllen Sie alle Felder aus.",
@@ -960,15 +1071,20 @@
           label_password: "Passwort",
           label_role: "Rolle",
           settings: "Einstellungen",
-          settings_subtitle: "Konfigurieren Sie die Schwellenwerte des Portals.",
+          settings_subtitle:
+            "Konfigurieren Sie die Schwellenwerte des Portals.",
           setting_max_reports_label: "Max. Hinweise pro Stunde pro IP",
-          setting_max_reports_hint: "Wie viele Hinweise darf eine IP-Adresse pro Stunde einreichen?",
+          setting_max_reports_hint:
+            "Wie viele Hinweise darf eine IP-Adresse pro Stunde einreichen?",
           setting_max_file_label: "Max. Dateigröße (MB)",
-          setting_max_file_hint: "Maximale Größe einer einzelnen hochgeladenen Datei.",
+          setting_max_file_hint:
+            "Maximale Größe einer einzelnen hochgeladenen Datei.",
           setting_max_weekly_label: "Max. Upload pro Woche pro Konto (MB)",
-          setting_max_weekly_hint: "Maximales Gesamt-Upload-Volumen pro Konto innerhalb von 7 Tagen.",
+          setting_max_weekly_hint:
+            "Maximales Gesamt-Upload-Volumen pro Konto innerhalb von 7 Tagen.",
           btn_save_settings: "Einstellungen speichern",
-          success_settings_saved: "Die Einstellungen wurden erfolgreich gespeichert.",
+          success_settings_saved:
+            "Die Einstellungen wurden erfolgreich gespeichert.",
         },
         en: {
           app_name: "Whistleblower Portal",
@@ -1039,10 +1155,12 @@
           status_active: "Active",
           status_deactivated: "Deactivated",
           confirm_reactivate_title: "Reactivate Admin?",
-          confirm_reactivate: "The admin will regain access to the admin panel.",
+          confirm_reactivate:
+            "The admin will regain access to the admin panel.",
           yes_reactivate: "Yes, reactivate",
           confirm_delete_title: "Delete Admin?",
-          confirm_delete: "The account will be permanently deleted. Audit log entries for this admin will be preserved.",
+          confirm_delete:
+            "The account will be permanently deleted. Audit log entries for this admin will be preserved.",
           yes_delete: "Yes, delete",
           new_password_title: "New Password",
           new_password_label: "New password (min. 8 characters)",
@@ -1052,14 +1170,18 @@
           section_identity: "Identity (Superadmin)",
           btn_unlock_identity: "Unlock Identity",
           identity_anonymous: "Anonymous report — no identity data exists.",
-          identity_has_account: "Whistleblower has an account. Identity is locked.",
+          identity_has_account:
+            "Whistleblower has an account. Identity is locked.",
           confirm_unlock_title: "Unlock Identity?",
-          confirm_unlock: "This action will be permanently logged in the audit trail. Only proceed if legally required (e.g. court order).",
+          confirm_unlock:
+            "This action will be permanently logged in the audit trail. Only proceed if legally required (e.g. court order).",
           yes_unlock: "Yes, unlock",
           confirm_deactivate_title: "Deactivate Admin?",
-          confirm_deactivate: "This admin will immediately lose all permissions.",
+          confirm_deactivate:
+            "This admin will immediately lose all permissions.",
           yes_deactivate: "Yes, deactivate",
-          success_unlock: "Identity unlocked. Action has been permanently logged.",
+          success_unlock:
+            "Identity unlocked. Action has been permanently logged.",
           success_deactivate: "Admin has been deactivated.",
           success_create_admin: "Admin account created successfully.",
           err_fill_all: "Please fill in all fields.",
@@ -1069,11 +1191,13 @@
           settings: "Settings",
           settings_subtitle: "Configure portal-wide thresholds.",
           setting_max_reports_label: "Max reports per hour per IP",
-          setting_max_reports_hint: "How many reports can one IP address submit per hour?",
+          setting_max_reports_hint:
+            "How many reports can one IP address submit per hour?",
           setting_max_file_label: "Max file size (MB)",
           setting_max_file_hint: "Maximum size of a single uploaded file.",
           setting_max_weekly_label: "Max upload per week per account (MB)",
-          setting_max_weekly_hint: "Maximum total upload volume per account within a rolling 7-day window.",
+          setting_max_weekly_hint:
+            "Maximum total upload volume per account within a rolling 7-day window.",
           btn_save_settings: "Save Settings",
           success_settings_saved: "Settings have been saved successfully.",
         },
@@ -1120,7 +1244,9 @@
       }
 
       function showView(view, el) {
-        document.querySelectorAll(".sidebar-nav a").forEach((a) => a.classList.remove("active"));
+        document
+          .querySelectorAll(".sidebar-nav a")
+          .forEach((a) => a.classList.remove("active"));
         if (el) el.classList.add("active");
         document.getElementById("viewReports").style.display = "none";
         document.getElementById("viewAdmins").style.display = "none";
@@ -1141,18 +1267,26 @@
         try {
           const res = await api.superadminGetSettings();
           const s = res.data.settings;
-          document.getElementById("settingMaxReports").value = s.max_reports_per_hour_per_ip;
-          document.getElementById("settingMaxFile").value    = s.max_file_size_mb;
-          document.getElementById("settingMaxWeekly").value  = s.max_upload_per_week_mb;
+          document.getElementById("settingMaxReports").value =
+            s.max_reports_per_hour_per_ip;
+          document.getElementById("settingMaxFile").value = s.max_file_size_mb;
+          document.getElementById("settingMaxWeekly").value =
+            s.max_upload_per_week_mb;
         } catch (e) {
           Swal.fire(T.error_title, T.err_generic, "error");
         }
       }
 
       async function saveSettings() {
-        const maxReports = parseInt(document.getElementById("settingMaxReports").value);
-        const maxFile    = parseInt(document.getElementById("settingMaxFile").value);
-        const maxWeekly  = parseInt(document.getElementById("settingMaxWeekly").value);
+        const maxReports = parseInt(
+          document.getElementById("settingMaxReports").value,
+        );
+        const maxFile = parseInt(
+          document.getElementById("settingMaxFile").value,
+        );
+        const maxWeekly = parseInt(
+          document.getElementById("settingMaxWeekly").value,
+        );
 
         if (!maxReports || !maxFile || !maxWeekly)
           return Swal.fire(T.warning_title, T.err_fill_all, "warning");
@@ -1160,12 +1294,22 @@
         try {
           await api.superadminUpdateSettings({
             max_reports_per_hour_per_ip: maxReports,
-            max_file_size_mb:            maxFile,
-            max_upload_per_week_mb:      maxWeekly,
+            max_file_size_mb: maxFile,
+            max_upload_per_week_mb: maxWeekly,
           });
-          Swal.fire({ icon: "success", title: T.success_title, text: T.success_settings_saved, timer: 2000, showConfirmButton: false });
+          Swal.fire({
+            icon: "success",
+            title: T.success_title,
+            text: T.success_settings_saved,
+            timer: 2000,
+            showConfirmButton: false,
+          });
         } catch (err) {
-          Swal.fire(T.error_title, err.response?.data?.message || T.err_generic, "error");
+          Swal.fire(
+            T.error_title,
+            err.response?.data?.message || T.err_generic,
+            "error",
+          );
         }
       }
 
@@ -1309,9 +1453,10 @@
         document.getElementById("panelStatusSelect").value = report.status;
 
         const isClosed = report.status === "closed";
-        document.getElementById("panelMessageInputRow").style.display = isClosed ? "none" : "flex";
+        document.getElementById("panelMessageInputRow").style.display = isClosed
+          ? "none"
+          : "flex";
 
-        // Identity section — superadmin only
         const identitySection = document.getElementById("identitySection");
         const identityBox = document.getElementById("identityBox");
         if (isSuperAdmin) {
@@ -1320,14 +1465,18 @@
             identityBox.className = "identity-box";
             identityBox.innerHTML =
               '<p style="font-size:13px;color:#777"><i class="fa-solid fa-user-secret"></i> ' +
-              T.identity_anonymous + "</p>";
+              T.identity_anonymous +
+              "</p>";
           } else {
             identityBox.className = "identity-box";
             identityBox.innerHTML =
               '<p style="font-size:13px;color:#555;margin-bottom:10px"><i class="fa-solid fa-lock"></i> ' +
-              T.identity_has_account + "</p>" +
+              T.identity_has_account +
+              "</p>" +
               '<button class="btn btn-orange" onclick="unlockIdentity()" style="font-size:12px;padding:6px 14px">' +
-              '<i class="fa-solid fa-lock-open"></i> ' + T.btn_unlock_identity + "</button>";
+              '<i class="fa-solid fa-lock-open"></i> ' +
+              T.btn_unlock_identity +
+              "</button>";
           }
         } else {
           identitySection.style.display = "none";
@@ -1510,8 +1659,6 @@
         window.location.href = "../index.html";
       }
 
-      // ── Superadmin: admin management ──────────────────────────────────────
-
       async function loadAdmins() {
         try {
           const res = await api.superadminListAdmins();
@@ -1527,42 +1674,78 @@
         if (!admins.length) {
           body.innerHTML =
             '<div class="empty-state"><i class="fa-solid fa-users"></i><span>' +
-            T.no_admins + "</span></div>";
+            T.no_admins +
+            "</span></div>";
           return;
         }
         body.innerHTML = admins
           .map((a) => {
             const date = new Date(a.created_at).toLocaleDateString(
-              currentLang === "de" ? "de-DE" : "en-GB"
+              currentLang === "de" ? "de-DE" : "en-GB",
             );
             const isDeactivated = a.role === "deactivated_admin";
-            const roleLabel = a.role === "superadmin"
-              ? T.role_superadmin
-              : isDeactivated ? T.status_deactivated : T.role_admin;
-            const roleBadgeClass = a.role === "superadmin"
-              ? "anon-no"
-              : isDeactivated ? "status-clarification" : "status-received";
+            const roleLabel =
+              a.role === "superadmin"
+                ? T.role_superadmin
+                : isDeactivated
+                  ? T.status_deactivated
+                  : T.role_admin;
+            const roleBadgeClass =
+              a.role === "superadmin"
+                ? "anon-no"
+                : isDeactivated
+                  ? "status-clarification"
+                  : "status-received";
             const isMe = user && a.id === user.id;
 
             let actions = "";
             if (isMe) {
-              actions = '<span style="font-size:12px;color:#999;font-style:italic">(you)</span>';
+              actions =
+                '<span style="font-size:12px;color:#999;font-style:italic">(you)</span>';
             } else if (isDeactivated) {
               actions =
-                '<button class="btn btn-green" style="font-size:11px;padding:4px 10px;margin-right:4px" onclick="reactivateAdmin(\'' + a.id + '\')">' + T.btn_reactivate + "</button>" +
-                '<button class="btn btn-red" style="font-size:11px;padding:4px 10px" onclick="deleteAdmin(\'' + a.id + '\')">' + T.btn_delete + "</button>";
+                '<button class="btn btn-green" style="font-size:11px;padding:4px 10px;margin-right:4px" onclick="reactivateAdmin(\'' +
+                a.id +
+                "')\">" +
+                T.btn_reactivate +
+                "</button>" +
+                '<button class="btn btn-red" style="font-size:11px;padding:4px 10px" onclick="deleteAdmin(\'' +
+                a.id +
+                "')\">" +
+                T.btn_delete +
+                "</button>";
             } else {
               actions =
-                '<button class="btn btn-gray" style="font-size:11px;padding:4px 10px;margin-right:4px" onclick="changeAdminPassword(\'' + a.id + '\')">' + T.btn_change_password + "</button>" +
-                '<button class="btn btn-gray" style="font-size:11px;padding:4px 10px" onclick="deactivateAdmin(\'' + a.id + '\')">' + T.btn_deactivate + "</button>";
+                '<button class="btn btn-gray" style="font-size:11px;padding:4px 10px;margin-right:4px" onclick="changeAdminPassword(\'' +
+                a.id +
+                "')\">" +
+                T.btn_change_password +
+                "</button>" +
+                '<button class="btn btn-gray" style="font-size:11px;padding:4px 10px" onclick="deactivateAdmin(\'' +
+                a.id +
+                "')\">" +
+                T.btn_deactivate +
+                "</button>";
             }
 
             return (
-              '<div class="admins-table-row" style="' + (isDeactivated ? "opacity:0.65;" : "") + '">' +
-              '<span style="font-family:monospace;font-size:12px;color:#666">...' + a.id.substring(a.id.length - 12) + "</span>" +
-              '<span><span class="status-badge ' + roleBadgeClass + '">' + roleLabel + "</span></span>" +
-              '<span style="color:#666">' + date + "</span>" +
-              "<span>" + actions + "</span>" +
+              '<div class="admins-table-row" style="' +
+              (isDeactivated ? "opacity:0.65;" : "") +
+              '">' +
+              '<span style="font-family:monospace;font-size:12px;color:#666">...' +
+              a.id.substring(a.id.length - 12) +
+              "</span>" +
+              '<span><span class="status-badge ' +
+              roleBadgeClass +
+              '">' +
+              roleLabel +
+              "</span></span>" +
+              '<span style="color:#666">' +
+              date +
+              "</span>" +
+              "<span>" +
+              actions +
+              "</span>" +
               "</div>"
             );
           })
@@ -1574,18 +1757,28 @@
           title: T.create_admin,
           html:
             '<div style="text-align:left;margin-bottom:10px">' +
-            '<label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:4px">' + T.label_email + "</label>" +
+            '<label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:4px">' +
+            T.label_email +
+            "</label>" +
             '<input id="swalEmail" type="email" class="swal2-input" style="margin:0;width:100%;box-sizing:border-box">' +
             "</div>" +
             '<div style="text-align:left;margin-bottom:10px">' +
-            '<label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:4px">' + T.label_password + "</label>" +
+            '<label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:4px">' +
+            T.label_password +
+            "</label>" +
             '<input id="swalPassword" type="password" class="swal2-input" style="margin:0;width:100%;box-sizing:border-box">' +
             "</div>" +
             '<div style="text-align:left">' +
-            '<label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:4px">' + T.label_role + "</label>" +
+            '<label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:4px">' +
+            T.label_role +
+            "</label>" +
             '<select id="swalRole" class="swal2-input" style="margin:0;width:100%;box-sizing:border-box;height:38px">' +
-            '<option value="admin">' + T.role_admin + "</option>" +
-            '<option value="superadmin">' + T.role_superadmin + "</option>" +
+            '<option value="admin">' +
+            T.role_admin +
+            "</option>" +
+            '<option value="superadmin">' +
+            T.role_superadmin +
+            "</option>" +
             "</select>" +
             "</div>",
           confirmButtonText: T.btn_create,
@@ -1606,10 +1799,20 @@
         if (!form) return;
         try {
           await api.superadminCreateAdmin(form.email, form.password, form.role);
-          Swal.fire({ icon: "success", title: T.success_title, text: T.success_create_admin, timer: 2000, showConfirmButton: false });
+          Swal.fire({
+            icon: "success",
+            title: T.success_title,
+            text: T.success_create_admin,
+            timer: 2000,
+            showConfirmButton: false,
+          });
           loadAdmins();
         } catch (err) {
-          Swal.fire(T.error_title, err.response?.data?.message || T.err_generic, "error");
+          Swal.fire(
+            T.error_title,
+            err.response?.data?.message || T.err_generic,
+            "error",
+          );
         }
       }
 
@@ -1626,10 +1829,20 @@
         if (!result.isConfirmed) return;
         try {
           await api.superadminDeactivateAdmin(adminId);
-          Swal.fire({ icon: "success", title: T.success_title, text: T.success_deactivate, timer: 2000, showConfirmButton: false });
+          Swal.fire({
+            icon: "success",
+            title: T.success_title,
+            text: T.success_deactivate,
+            timer: 2000,
+            showConfirmButton: false,
+          });
           loadAdmins();
         } catch (err) {
-          Swal.fire(T.error_title, err.response?.data?.message || T.err_generic, "error");
+          Swal.fire(
+            T.error_title,
+            err.response?.data?.message || T.err_generic,
+            "error",
+          );
         }
       }
 
@@ -1646,10 +1859,20 @@
         if (!result.isConfirmed) return;
         try {
           await api.superadminReactivateAdmin(adminId);
-          Swal.fire({ icon: "success", title: T.success_title, text: T.success_reactivate, timer: 2000, showConfirmButton: false });
+          Swal.fire({
+            icon: "success",
+            title: T.success_title,
+            text: T.success_reactivate,
+            timer: 2000,
+            showConfirmButton: false,
+          });
           loadAdmins();
         } catch (err) {
-          Swal.fire(T.error_title, err.response?.data?.message || T.err_generic, "error");
+          Swal.fire(
+            T.error_title,
+            err.response?.data?.message || T.err_generic,
+            "error",
+          );
         }
       }
 
@@ -1666,10 +1889,20 @@
         if (!result.isConfirmed) return;
         try {
           await api.superadminDeleteAdmin(adminId);
-          Swal.fire({ icon: "success", title: T.success_title, text: T.success_delete, timer: 2000, showConfirmButton: false });
+          Swal.fire({
+            icon: "success",
+            title: T.success_title,
+            text: T.success_delete,
+            timer: 2000,
+            showConfirmButton: false,
+          });
           loadAdmins();
         } catch (err) {
-          Swal.fire(T.error_title, err.response?.data?.message || T.err_generic, "error");
+          Swal.fire(
+            T.error_title,
+            err.response?.data?.message || T.err_generic,
+            "error",
+          );
         }
       }
 
@@ -1690,9 +1923,19 @@
         if (!password) return;
         try {
           await api.superadminChangeAdminPassword(adminId, password);
-          Swal.fire({ icon: "success", title: T.success_title, text: T.success_change_password, timer: 2000, showConfirmButton: false });
+          Swal.fire({
+            icon: "success",
+            title: T.success_title,
+            text: T.success_change_password,
+            timer: 2000,
+            showConfirmButton: false,
+          });
         } catch (err) {
-          Swal.fire(T.error_title, err.response?.data?.message || T.err_generic, "error");
+          Swal.fire(
+            T.error_title,
+            err.response?.data?.message || T.err_generic,
+            "error",
+          );
         }
       }
 
@@ -1709,19 +1952,27 @@
         });
         if (!result.isConfirmed) return;
         try {
-          const res = await api.superadminUnlockIdentity(currentReport.reference_number);
+          const res = await api.superadminUnlockIdentity(
+            currentReport.reference_number,
+          );
           const identityBox = document.getElementById("identityBox");
           identityBox.className = "identity-box unlocked";
           identityBox.innerHTML =
             '<p style="font-size:13px;font-weight:600;color:#2e7d32;margin-bottom:8px">' +
-            '<i class="fa-solid fa-unlock"></i> ' + T.success_unlock + "</p>" +
-            '<p style="font-size:14px;color:#333"><strong>Email:</strong> ' + res.data.email + "</p>";
+            '<i class="fa-solid fa-unlock"></i> ' +
+            T.success_unlock +
+            "</p>" +
+            '<p style="font-size:14px;color:#333"><strong>Email:</strong> ' +
+            res.data.email +
+            "</p>";
         } catch (err) {
-          Swal.fire(T.error_title, err.response?.data?.message || T.err_generic, "error");
+          Swal.fire(
+            T.error_title,
+            err.response?.data?.message || T.err_generic,
+            "error",
+          );
         }
       }
-
-      // ── Init ──────────────────────────────────────────────────────────────
 
       applyLang();
 

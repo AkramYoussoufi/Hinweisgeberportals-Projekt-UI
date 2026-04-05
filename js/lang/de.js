@@ -113,4 +113,5 @@ var LANG = {
   copied_text: "Zugangsdaten wurden in die Zwischenablage kopiert.",
   error_title: "Fehler",
   warning_title: "Hinweis",
+  err_attachment_upload: "Ihr Bericht wurde eingereicht, aber der Anhang konnte nicht hochgeladen werden. Sie können ihn später über die Trackingseite hinzufügen.",
 };
