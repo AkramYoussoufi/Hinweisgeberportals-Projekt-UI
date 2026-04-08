@@ -1519,31 +1519,35 @@
             return;
           }
 
-          thread.innerHTML = messages
-            .map((m) => {
-              const isAdmin = m.sender_role === "admin";
-              const time = new Date(m.created_at).toLocaleString(
-                currentLang === "de" ? "de-DE" : "en-GB",
-                {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                },
-              );
-              return (
-                '<div class="message-bubble ' +
-                (isAdmin ? "message-admin" : "message-whistleblower") +
-                '">' +
-                m.body +
-                '<div class="message-time">' +
-                time +
-                "</div>" +
-                "</div>"
-              );
-            })
-            .join("");
+          thread.innerHTML = "";
+
+          messages.forEach((m) => {
+            const isAdmin = m.sender_role === "admin";
+            const time = new Date(m.created_at).toLocaleString(
+              currentLang === "de" ? "de-DE" : "en-GB",
+              {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              },
+            );
+
+            const messageDiv = document.createElement("div");
+            messageDiv.className = `message-bubble ${isAdmin ? "message-admin" : "message-whistleblower"}`;
+
+            const bodySpan = document.createElement("span");
+            bodySpan.textContent = m.body;
+
+            const timeDiv = document.createElement("div");
+            timeDiv.className = "message-time";
+            timeDiv.textContent = time;
+
+            messageDiv.appendChild(bodySpan);
+            messageDiv.appendChild(timeDiv);
+            thread.appendChild(messageDiv);
+          });
 
           thread.scrollTop = thread.scrollHeight;
         } catch (e) {
@@ -1638,7 +1642,8 @@
           link.remove();
           window.URL.revokeObjectURL(url);
         } catch (e) {
-          Swal.fire(T.error_title, T.err_generic, "error");
+          const msg = await api.getErrorMessage(e, T.err_generic);
+          Swal.fire(T.error_title, msg, "error");
         }
       }
 

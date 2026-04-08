@@ -158,6 +158,21 @@ const api = {
     });
   },
 
+  // When responseType is "blob", error responses are also blobs.
+  // This helper reads the blob back as JSON to get the server's message.
+  async getErrorMessage(error, fallback) {
+    if (error.response?.data instanceof Blob) {
+      try {
+        const text = await error.response.data.text();
+        const json = JSON.parse(text);
+        return json.message || fallback;
+      } catch {
+        return fallback;
+      }
+    }
+    return error.response?.data?.message || fallback;
+  },
+
   // Admin
   async adminGetReports(filters = {}) {
     return axios.get("/admin/reports", { params: filters });

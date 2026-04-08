@@ -766,7 +766,8 @@
           link.remove();
           window.URL.revokeObjectURL(url);
         } catch (e) {
-          Swal.fire(L.error_title, L.err_generic, "error");
+          const msg = await api.getErrorMessage(e, L.err_generic);
+          Swal.fire(L.error_title, msg, "error");
         }
       }
 

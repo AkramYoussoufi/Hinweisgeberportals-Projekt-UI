@@ -1339,7 +1339,8 @@
           link.remove();
           window.URL.revokeObjectURL(url);
         } catch (e) {
-          Swal.fire(T.error_title, T.err_generic, "error");
+          const msg = await api.getErrorMessage(e, T.err_generic);
+          Swal.fire(T.error_title, msg, "error");
         }
       }
 
